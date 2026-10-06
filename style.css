@@ -1,38 +1,52 @@
+/* =========================================================
+   BillSplit CSS
+========================================================= */
+
+:root {
+    --primary: #16a34a;
+    --primary-dark: #15803d;
+    --primary-light: #dcfce7;
+
+    --background: #f5f7f6;
+    --card: #ffffff;
+    --text: #17201a;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+
+    --danger: #ef4444;
+    --warning: #f59e0b;
+
+    --shadow:
+        0 5px 20px rgba(0, 0, 0, 0.06);
+
+    --radius: 18px;
+}
+
+
+/* =========================
+   RESET
+========================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-:root {
-    --primary: #16a34a;
-    --primary-dark: #15803d;
-    --background: #f5f7f8;
-    --card: #ffffff;
-    --text: #111827;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --success-bg: #dcfce7;
-    --nav-height: 76px;
+
+html {
+    scroll-behavior: smooth;
 }
 
-body.dark {
-    --background: #101413;
-    --card: #18201d;
-    --text: #f3f4f6;
-    --muted: #9ca3af;
-    --border: #29332f;
-    --success-bg: #143d25;
-}
 
 body {
     font-family: "Inter", sans-serif;
     background: var(--background);
     color: var(--text);
-    transition: 0.25s ease;
+    min-height: 100vh;
+    padding-bottom: 90px;
 }
+
 
 button,
 input,
@@ -40,626 +54,853 @@ select {
     font-family: inherit;
 }
 
+
 button {
     cursor: pointer;
 }
 
-.app {
-    min-height: 100vh;
-    padding-bottom: var(--nav-height);
-}
 
-
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 .top-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 22px 20px;
     background: var(--card);
     border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
-.top-header h1 {
-    font-size: 25px;
+
+.logo-area {
+    max-width: 720px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.logo-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 13px;
+
+    background: var(--primary);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
     font-weight: 800;
 }
 
-.top-header h1 span {
-    color: var(--primary);
+
+.logo-area h1 {
+    font-size: 20px;
+    font-weight: 800;
 }
 
-.top-header p {
-    color: var(--muted);
+
+.logo-area p {
     font-size: 12px;
-    margin-top: 3px;
+    color: var(--muted);
+    margin-top: 2px;
 }
 
 
-/* CONTENT */
+/* =========================
+   MAIN
+========================= */
 
-.content {
-    width: 100%;
+main {
     max-width: 720px;
     margin: auto;
-    padding: 18px;
+    padding: 20px 16px;
 }
+
 
 .page {
     display: none;
 }
+
 
 .page.active {
     display: block;
 }
 
 
-/* WELCOME */
-
-.welcome-card {
-    background: linear-gradient(135deg, #16a34a, #15803d);
-    color: white;
-    border-radius: 22px;
-    padding: 25px;
+.page-title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     margin-bottom: 18px;
 }
 
-.welcome-card h2 {
-    font-size: 28px;
-    margin: 4px 0;
+
+.page-title h2 {
+    font-size: 25px;
+    font-weight: 800;
 }
+
+
+.page-title p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+
+.back-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--card);
+    border-radius: 12px;
+    font-size: 22px;
+}
+
+
+/* =========================
+   WELCOME
+========================= */
+
+.welcome-card {
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #15803d
+        );
+
+    color: white;
+    border-radius: 24px;
+    padding: 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 16px;
+}
+
+
+.welcome-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+
+.welcome-card h2 {
+    font-size: 25px;
+    line-height: 1.25;
+    margin: 8px 0;
+}
+
 
 .welcome-card p {
-    opacity: 0.9;
     font-size: 13px;
+    opacity: 0.9;
 }
 
-.small-text {
-    font-size: 11px !important;
-}
 
 .welcome-icon {
-    font-size: 50px;
+    font-size: 55px;
 }
 
 
-/* STATS */
+/* =========================
+   STATS
+========================= */
 
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
+
 
 .stat-card {
     background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.stat-card > span {
-    font-size: 27px;
-}
-
-.stat-card small {
-    display: block;
-    color: var(--muted);
-    font-size: 11px;
-    margin-bottom: 4px;
-}
-
-.stat-card strong {
-    font-size: 18px;
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
 }
 
 
-/* SECTION */
-
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 22px 2px 12px;
-}
-
-.section-title h3 {
-    font-size: 17px;
-}
-
-.section-title button {
-    border: none;
-    background: none;
-    color: var(--primary);
-    font-weight: 600;
-}
-
-
-/* BUTTONS */
-
-.primary-btn {
-    border: none;
-    background: var(--primary);
-    color: white;
-    font-weight: 700;
-    border-radius: 13px;
-    padding: 14px 18px;
-    transition: 0.2s;
-}
-
-.primary-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
-}
-
-.big-btn {
-    width: 100%;
-    font-size: 15px;
-}
-
-.icon-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--background);
-    color: var(--text);
-    font-size: 18px;
-}
-
-.small-btn {
-    border: none;
-    background: var(--success-bg);
-    color: var(--primary);
-    padding: 8px 13px;
-    border-radius: 9px;
-    font-weight: 700;
-}
-
-.small-btn.danger {
-    color: var(--danger);
-    background: #fee2e2;
-}
-
-.back-btn {
-    border: none;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+.stat-card span {
     font-size: 20px;
 }
 
 
-/* PAGE HEADER */
-
-.page-header {
-    display: flex;
-    gap: 13px;
-    align-items: center;
-    margin-bottom: 18px;
-}
-
-.page-header h2 {
-    font-size: 23px;
-}
-
-.page-header p {
+.stat-card small {
+    display: block;
     color: var(--muted);
+    margin-top: 10px;
     font-size: 12px;
-    margin-top: 3px;
 }
 
 
-/* CARDS */
+.stat-card strong {
+    display: block;
+    font-size: 22px;
+    margin-top: 4px;
+}
 
-.card {
+
+/* =========================
+   CARDS
+========================= */
+
+.card,
+.payment-card,
+.summary-card,
+.discount-card,
+.fee-card,
+.settings-row,
+.danger-card {
     background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
+    border-radius: var(--radius);
     padding: 18px;
     margin-bottom: 14px;
+    box-shadow: var(--shadow);
 }
 
-.card h3 {
+
+.card h3,
+.payment-card h3,
+.summary-card h3,
+.discount-card h3 {
     font-size: 16px;
-    margin-bottom: 14px;
 }
 
 
-/* INPUT */
+.card > h3 {
+    margin-bottom: 16px;
+}
+
+
+.card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+
+.card-heading p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+
+/* =========================
+   INPUTS
+========================= */
 
 label {
     display: block;
     font-size: 12px;
-    color: var(--muted);
     font-weight: 600;
     margin: 14px 0 7px;
 }
+
 
 input,
 select {
     width: 100%;
     border: 1px solid var(--border);
-    background: var(--background);
+    background: var(--card);
     color: var(--text);
-    border-radius: 11px;
-    padding: 12px;
+
+    border-radius: 12px;
+    padding: 13px 14px;
+
     outline: none;
     font-size: 14px;
 }
 
+
 input:focus,
 select:focus {
     border-color: var(--primary);
+    box-shadow:
+        0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 
-.amount-input {
+
+.money-input {
     display: flex;
     align-items: center;
-    background: var(--background);
+
     border: 1px solid var(--border);
-    border-radius: 11px;
-    padding-left: 13px;
+    border-radius: 12px;
+
+    overflow: hidden;
 }
 
-.amount-input span {
+
+.money-input span {
+    padding-left: 14px;
     font-weight: 700;
-    color: var(--primary);
 }
 
-.amount-input input {
+
+.money-input input {
     border: none;
-    background: transparent;
+    box-shadow: none;
 }
 
 
-/* CAMERA */
+/* =========================
+   BUTTONS
+========================= */
 
-.camera-area {
-    margin-top: 8px;
-}
-
-.camera-btn {
+.primary-btn {
     width: 100%;
+    border: none;
+    border-radius: 13px;
+
+    background: var(--primary);
+    color: white;
+
+    font-weight: 700;
+    padding: 13px 16px;
+
+    transition: 0.2s;
+}
+
+
+.primary-btn:hover {
+    background: var(--primary-dark);
+}
+
+
+.big-btn {
     padding: 15px;
-    border: 1px dashed var(--primary);
-    background: var(--success-bg);
-    color: var(--primary);
-    border-radius: 12px;
-    font-weight: 700;
-}
-
-.bill-preview {
-    width: 100%;
-    max-height: 280px;
-    object-fit: contain;
-    margin-top: 12px;
-    border-radius: 12px;
-    display: none;
-}
-
-.remove-photo {
-    width: 100%;
-    margin-top: 8px;
-    border: none;
-    background: #fee2e2;
-    color: var(--danger);
-    padding: 10px;
-    border-radius: 9px;
+    font-size: 15px;
+    margin-bottom: 14px;
 }
 
 
-/* ROWS */
-
-.row-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.muted {
-    color: var(--muted);
-    font-size: 11px;
-}
-
-.badge,
-.discount-badge {
-    padding: 6px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.badge.green {
-    background: var(--success-bg);
-    color: var(--primary);
-}
-
-.discount-badge {
-    background: #fef3c7;
-    color: #b45309;
-}
-
-
-/* CALCULATION */
-
-.calculation-preview {
-    display: flex;
-    justify-content: space-between;
-    padding: 13px;
-    background: var(--background);
-    border-radius: 10px;
-}
-
-.calculation-preview span {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.calculation-preview strong {
-    color: var(--primary);
-}
-
-
-/* TIP */
-
-.tip-options {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-}
-
-.tip-btn,
-.split-btn {
+.secondary-btn {
     border: 1px solid var(--border);
-    background: var(--background);
+    background: var(--card);
     color: var(--text);
-    border-radius: 9px;
-    padding: 10px;
-    font-size: 12px;
+
+    border-radius: 11px;
+    padding: 11px 14px;
+
     font-weight: 600;
 }
 
-.tip-btn.active,
-.split-btn.active {
+
+.small-btn {
+    border: none;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+
+    border-radius: 9px;
+    padding: 8px 11px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.text-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+.danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+.danger-btn {
+    width: 100%;
+    border: none;
+    background: #ef4444;
+    color: white;
+
+    border-radius: 11px;
+    padding: 12px;
+
+    font-weight: 700;
+}
+
+
+.full-btn {
+    width: 100%;
+    margin-top: 10px;
+}
+
+
+/* =========================
+   PLATFORM FEE
+========================= */
+
+.fee-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ecfdf5,
+            #dcfce7
+        );
+
+    border: 1px solid #bbf7d0;
+}
+
+
+.fee-icon {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+    background: var(--primary);
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.fee-content {
+    flex: 1;
+}
+
+
+.fee-content strong {
+    display: block;
+    font-size: 14px;
+}
+
+
+.fee-content span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+
+/* =========================
+   TIP
+========================= */
+
+.tip-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+}
+
+
+.tip-btn {
+    border: 1px solid var(--border);
+    background: var(--card);
+
+    border-radius: 10px;
+    padding: 10px 5px;
+
+    font-weight: 600;
+}
+
+
+.tip-btn.active {
     background: var(--primary);
     color: white;
     border-color: var(--primary);
 }
 
 
-/* DISCOUNT */
+/* =========================
+   DISCOUNT
+========================= */
 
-.discount-info {
-    background: var(--background);
-    border-radius: 12px;
-    padding: 13px;
+.discount-card {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
 }
 
-.discount-info > div {
-    display: flex;
-    justify-content: space-between;
+
+.discount-card p {
+    color: #92400e;
 }
 
-.discount-info span {
-    color: var(--muted);
+
+.discount-saving {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #92400e;
+}
+
+
+.discount-saving strong {
+    margin-left: 5px;
+}
+
+
+/* =========================
+   COUPON
+========================= */
+
+.applied-coupon {
+    background: var(--primary-light);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 14px;
     font-size: 12px;
 }
 
-.discount-info strong {
-    color: var(--primary);
-}
 
-.discount-info p {
+.applied-coupon span {
     color: var(--muted);
-    font-size: 11px;
-    margin-top: 7px;
+    margin-left: 8px;
 }
 
-
-/* COUPON */
-
-.applied-coupon {
-    background: var(--success-bg);
-    border-radius: 12px;
-    padding: 13px;
-    color: var(--primary);
-    margin-top: 12px;
-}
-
-.applied-coupon strong {
-    display: block;
-}
 
 .hidden {
     display: none !important;
 }
 
 
-/* SPLIT */
-
-.split-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 14px;
-}
-
-.person-row {
-    display: grid;
-    grid-template-columns: 1fr 100px 42px;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 9px;
-}
-
-.person-row input {
-    padding: 10px;
-}
-
-.person-status {
-    border: none;
-    border-radius: 9px;
-    padding: 9px 5px;
-    font-size: 10px;
-    font-weight: 700;
-}
-
-.person-status.paid {
-    background: var(--success-bg);
-    color: var(--primary);
-}
-
-.person-status.unpaid {
-    background: #fee2e2;
-    color: var(--danger);
-}
-
-.remove-person {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 9px;
-    background: #fee2e2;
-    color: var(--danger);
-}
-
-.payment-summary {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 15px;
-}
-
-.payment-summary > div {
-    background: var(--background);
-    padding: 12px;
-    border-radius: 10px;
-}
-
-.payment-summary span {
-    display: block;
-    font-size: 11px;
-    color: var(--muted);
-}
-
-.payment-summary strong {
-    font-size: 15px;
-}
-
-
-/* SUMMARY */
-
-.summary-card {
-    background: var(--text);
-    color: var(--background);
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 14px;
-}
-
-.summary-card h3 {
-    margin-bottom: 18px;
-}
-
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
-    font-size: 13px;
-}
-
-.summary-row span {
-    opacity: 0.7;
-}
-
-.discount-row strong,
-.coupon-row strong {
-    color: #4ade80;
-}
-
-.summary-total {
-    border-top: 1px solid rgba(255,255,255,0.15);
-    margin-top: 16px;
-    padding-top: 16px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 19px;
-}
-
-.summary-total strong {
-    color: #4ade80;
-}
-
-
-/* BILLS */
-
-.bill-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.bill-card {
+.coupon-card {
     background: var(--card);
+    border-radius: var(--radius);
+    padding: 17px;
+
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+
     border: 1px solid var(--border);
-    padding: 15px;
-    border-radius: 15px;
-    cursor: pointer;
 }
 
-.bill-card-top {
+
+.coupon-top {
     display: flex;
     justify-content: space-between;
+    gap: 12px;
 }
 
-.bill-card h3 {
-    font-size: 14px;
+
+.coupon-code {
+    font-weight: 800;
+    color: var(--primary-dark);
+    letter-spacing: 0.5px;
 }
 
-.bill-card .date {
-    font-size: 10px;
+
+.coupon-top p {
     color: var(--muted);
-    margin-top: 4px;
+    font-size: 12px;
+    margin-top: 5px;
 }
 
-.bill-total {
+
+.coupon-discount {
+    white-space: nowrap;
     font-weight: 800;
     color: var(--primary);
 }
 
-.bill-card-bottom {
+
+.coupon-meta {
     display: flex;
-    justify-content: space-between;
-    margin-top: 12px;
-    color: var(--muted);
-    font-size: 11px;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 13px;
 }
 
 
-/* EMPTY */
+.coupon-meta span {
+    background: #f3f4f6;
+    color: #4b5563;
+
+    padding: 5px 8px;
+    border-radius: 6px;
+
+    font-size: 10px;
+}
+
+
+.coupon-apply {
+    width: 100%;
+    margin-top: 13px;
+
+    border: none;
+    background: var(--primary);
+    color: white;
+
+    border-radius: 9px;
+    padding: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================
+   PEOPLE
+========================= */
+
+.split-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #f3f4f6;
+
+    padding: 4px;
+    border-radius: 10px;
+
+    margin: 15px 0;
+}
+
+
+.split-btn {
+    border: none;
+    background: transparent;
+
+    border-radius: 8px;
+    padding: 9px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.split-btn.active {
+    background: var(--card);
+    box-shadow: var(--shadow);
+    color: var(--primary-dark);
+}
+
+
+.person-row {
+    display: grid;
+    grid-template-columns: 1fr 105px 38px;
+    gap: 7px;
+    margin-bottom: 8px;
+}
+
+
+.person-row input {
+    min-width: 0;
+    padding: 10px;
+}
+
+
+.person-remove {
+    border: none;
+    border-radius: 9px;
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* =========================
+   PAYMENT
+========================= */
+
+.payment-row,
+.summary-row,
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 9px 0;
+    font-size: 13px;
+}
+
+
+.payment-row strong {
+    color: var(--primary-dark);
+}
+
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary-card {
+    border: 1px solid #bbf7d0;
+}
+
+
+.discount-row strong {
+    color: #16a34a;
+}
+
+
+.summary-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+}
+
+
+.final-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-top: 10px;
+}
+
+
+.final-row span {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+.final-row strong {
+    font-size: 23px;
+    color: var(--primary-dark);
+}
+
+
+/* =========================
+   PHOTO
+========================= */
+
+.photo-section {
+    margin-top: 15px;
+}
+
+
+.bill-preview {
+    display: none;
+
+    width: 100%;
+    max-height: 250px;
+
+    object-fit: contain;
+
+    margin-top: 12px;
+
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+
+.remove-photo-btn {
+    display: none;
+
+    border: none;
+    background: none;
+
+    color: var(--danger);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    margin-top: 8px;
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+.section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin: 24px 0 12px;
+}
+
+
+.section-heading h2 {
+    font-size: 17px;
+}
+
+
+.bill-card {
+    background: var(--card);
+    border-radius: var(--radius);
+
+    padding: 16px;
+    margin-bottom: 10px;
+
+    box-shadow: var(--shadow);
+
+    cursor: pointer;
+}
+
+
+.bill-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+
+.bill-card h3 {
+    font-size: 15px;
+}
+
+
+.bill-card .date {
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 4px;
+}
+
+
+.bill-total {
+    color: var(--primary-dark);
+    font-weight: 800;
+}
+
+
+.bill-card-bottom {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 13px;
+    padding-top: 10px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--muted);
+    font-size: 10px;
+}
+
 
 .empty-state {
     text-align: center;
     padding: 35px 15px;
+
     color: var(--muted);
 }
 
+
 .empty-state div {
-    font-size: 40px;
+    font-size: 35px;
     margin-bottom: 10px;
 }
+
 
 .empty-state h3 {
     color: var(--text);
@@ -667,460 +908,823 @@ select:focus {
 }
 
 
-/* COUPON CARD */
+/* =========================
+   SETTINGS
+========================= */
 
-.coupon-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 17px;
-    padding: 17px;
-    margin-bottom: 12px;
-}
-
-.coupon-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.coupon-code {
-    color: var(--primary);
-    font-weight: 800;
-    font-size: 17px;
-}
-
-.coupon-discount {
-    background: var(--success-bg);
-    color: var(--primary);
-    padding: 6px 9px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.coupon-card p {
-    color: var(--muted);
-    font-size: 12px;
-    margin: 7px 0;
-}
-
-.coupon-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 10px 0;
-}
-
-.coupon-meta span {
-    background: var(--background);
-    padding: 5px 8px;
-    border-radius: 6px;
-    font-size: 9px;
-    color: var(--muted);
-}
-
-.coupon-apply {
-    width: 100%;
-    border: none;
-    background: var(--primary);
-    color: white;
-    padding: 10px;
-    border-radius: 9px;
-    font-weight: 700;
-}
-
-
-/* SETTINGS */
-
-.settings-card {
-    padding: 0;
-    overflow: hidden;
-}
-
-.settings-card > h3 {
-    padding: 18px 18px 5px;
-}
-
-.setting-row {
-    padding: 16px 18px;
-    border-top: 1px solid var(--border);
+.settings-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 15px;
 }
 
-.setting-row strong {
-    font-size: 13px;
-}
 
-.setting-row p {
+.settings-row p,
+.danger-card p {
     color: var(--muted);
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 4px;
 }
 
-.setting-row select,
-.setting-row input[type="date"] {
-    width: auto;
-    min-width: 110px;
-}
 
-.setting-button {
-    width: 100%;
-    border: none;
-    background: #fee2e2;
-    color: var(--danger);
-    padding: 13px;
-    border-radius: 10px;
-    font-weight: 700;
-}
-
-.about {
-    text-align: center;
-    padding: 25px;
+.muted {
     color: var(--muted);
-}
-
-.about h2 {
-    color: var(--primary);
-}
-
-.about p {
     font-size: 12px;
-    margin: 5px 0;
 }
 
 
-/* SWITCH */
+.danger-card {
+    border: 1px solid #fecaca;
+}
+
+
+.danger-card h3 {
+    color: #dc2626;
+}
+
+
+.version {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 15px;
+}
+
+
+/* =========================
+   SWITCH
+========================= */
 
 .switch {
-    margin: 0;
     position: relative;
-    width: 46px;
-    height: 25px;
+    width: 48px;
+    height: 26px;
+    margin: 0;
 }
 
+
 .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+    display: none;
 }
+
 
 .slider {
     position: absolute;
     inset: 0;
+
     background: #d1d5db;
+
     border-radius: 30px;
     transition: 0.2s;
 }
 
-.slider:before {
+
+.slider::before {
     content: "";
+
     position: absolute;
-    height: 19px;
-    width: 19px;
+
+    width: 20px;
+    height: 20px;
+
     left: 3px;
     top: 3px;
+
     background: white;
     border-radius: 50%;
+
     transition: 0.2s;
 }
+
 
 .switch input:checked + .slider {
     background: var(--primary);
 }
 
-.switch input:checked + .slider:before {
-    transform: translateX(21px);
+
+.switch input:checked + .slider::before {
+    transform: translateX(22px);
 }
 
 
-/* MODAL */
+/* =========================
+   MODALS
+========================= */
 
 .modal {
+    display: none;
+
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.55);
-    display: none;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 1000;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    z-index: 100;
+
+    padding: 20px;
+
+    overflow-y: auto;
 }
+
 
 .modal.active {
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.modal-content {
-    background: var(--card);
-    color: var(--text);
+
+.modal-box {
     width: 100%;
-    max-width: 720px;
-    max-height: 85vh;
+    max-width: 600px;
+
+    max-height: 90vh;
     overflow-y: auto;
-    border-radius: 22px 22px 0 0;
+
+    background: var(--card);
+    border-radius: 20px;
+
     padding: 20px;
 }
+
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 18px;
+
+    margin-bottom: 15px;
 }
+
 
 .modal-header h2 {
     font-size: 20px;
 }
 
+
 .modal-header p {
-    font-size: 11px;
     color: var(--muted);
-    margin-top: 3px;
+    font-size: 11px;
+    margin-top: 4px;
 }
 
-.modal-header button {
-    border: none;
-    background: var(--background);
-    color: var(--text);
+
+.close-btn {
     width: 35px;
     height: 35px;
-    border-radius: 50%;
+
+    border: none;
+    background: #f3f4f6;
+
+    border-radius: 10px;
+
+    font-size: 22px;
 }
 
 
-/* DETAILS */
+/* =========================
+   DETAILS
+========================= */
 
 .detail-section {
-    background: var(--background);
-    border-radius: 12px;
-    padding: 14px;
-    margin-bottom: 10px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
 }
 
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    font-size: 13px;
+
+.detail-section:last-child {
+    border-bottom: none;
 }
+
 
 .detail-total {
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 800;
-    color: var(--primary);
-    border-top: 1px solid var(--border);
-    padding-top: 12px;
-    margin-top: 12px;
+
+    margin-top: 5px;
 }
 
 
-/* BOTTOM NAV */
+.detail-total strong {
+    color: var(--primary-dark);
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 85px;
+
+    transform:
+        translate(-50%, 20px);
+
+    background: #111827;
+    color: white;
+
+    padding: 12px 17px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: 0.25s;
+
+    z-index: 200;
+
+    max-width: 90%;
+    text-align: center;
+}
+
+
+.toast.show {
+    opacity: 1;
+
+    transform:
+        translate(-50%, 0);
+}
+
+
+/* =========================
+   BOTTOM NAV
+========================= */
 
 .bottom-nav {
     position: fixed;
-    bottom: 0;
+
     left: 0;
     right: 0;
-    height: var(--nav-height);
+    bottom: 0;
+
+    height: 70px;
+
     background: var(--card);
     border-top: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    z-index: 500;
+
+    display: flex;
+    justify-content: center;
+
+    z-index: 50;
 }
 
+
 .nav-item {
+    width: 20%;
+    max-width: 110px;
+
     border: none;
     background: transparent;
+
     color: var(--muted);
+
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+
     gap: 4px;
 }
 
+
 .nav-item span {
-    font-size: 19px;
+    font-size: 20px;
 }
+
 
 .nav-item small {
     font-size: 9px;
 }
 
+
 .nav-item.active {
-    color: var(--primary);
+    color: var(--primary-dark);
 }
 
 
-/* TOAST */
+/* =========================
+   DARK MODE
+========================= */
 
-.toast {
-    position: fixed;
-    left: 50%;
-    bottom: 95px;
-    transform: translateX(-50%) translateY(20px);
-    background: #111827;
-    color: white;
-    padding: 12px 17px;
-    border-radius: 10px;
-    font-size: 12px;
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.25s;
-    z-index: 2000;
-}
+body.dark {
+    --background: #0f1712;
+    --card: #18221b;
+    --text: #f3f4f6;
+    --muted: #9ca3af;
+    --border: #2d3a31;
 
-.toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    --primary-light: #173c25;
 }
 
 
-/* MOBILE */
+body.dark .welcome-card {
+    background:
+        linear-gradient(
+            135deg,
+            #15803d,
+            #166534
+        );
+}
+
+
+body.dark .discount-card {
+    background: #302712;
+    border-color: #695315;
+}
+
+
+body.dark .fee-card {
+    background: #102d1c;
+    border-color: #225b38;
+}
+
+
+body.dark .split-toggle {
+    background: #111a14;
+}
+
+
+body.dark .coupon-meta span {
+    background: #243028;
+    color: #cbd5e1;
+}
+
+
+body.dark .close-btn {
+    background: #273229;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (min-width: 800px) {
+
+    body {
+        padding-bottom: 100px;
+    }
+
+    .bottom-nav {
+        left: 50%;
+        right: auto;
+
+        width: 720px;
+
+        transform:
+            translateX(-50%);
+
+        border-radius: 18px 18px 0 0;
+    }
+
+}
+
 
 @media (max-width: 480px) {
 
-    .content {
-        padding: 14px;
-    }
-
-    .person-row {
-        grid-template-columns: 1fr 85px 40px;
+    main {
+        padding: 16px 12px;
     }
 
     .welcome-card {
         padding: 20px;
     }
 
+    .welcome-card h2 {
+        font-size: 21px;
+    }
+
     .welcome-icon {
-        font-size: 40px;
+        font-size: 42px;
     }
+
+    .person-row {
+        grid-template-columns: 1fr 85px 35px;
+    }
+
 }
 
-/* Share Bill Button */
-.share-btn {
+/* =========================================================
+   NEW BILL SECTION - ALIGNMENT FIX
+   ========================================================= */
+
+/* Keep all New Bill cards aligned */
+#calculatorPage .card,
+#calculatorPage .fee-card,
+#calculatorPage .discount-card,
+#calculatorPage .payment-card,
+#calculatorPage .summary-card {
     width: 100%;
-    padding: 14px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 12px;
-    background: #25d366;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
+    margin-left: 0;
+    margin-right: 0;
 }
 
-.share-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+/* Page title alignment */
+#calculatorPage .page-title {
+    width: 100%;
+    margin-bottom: 16px;
 }
 
-/* Share Modal */
-.share-modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 9999;
-    align-items: flex-end;
-    justify-content: center;
+/* Card spacing */
+#calculatorPage .card,
+#calculatorPage .fee-card,
+#calculatorPage .discount-card,
+#calculatorPage .payment-card,
+#calculatorPage .summary-card {
+    margin-bottom: 14px;
 }
 
-.share-modal.active {
+/* Card headings */
+#calculatorPage .card-heading {
+    width: 100%;
+    align-items: center;
+}
+
+/* Make headings and right-side buttons stay aligned */
+#calculatorPage .card-heading > div {
+    min-width: 0;
+}
+
+#calculatorPage .card-heading button {
+    flex-shrink: 0;
+}
+
+/* Inputs inside New Bill */
+#calculatorPage input,
+#calculatorPage select {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Bill amount section */
+#calculatorPage .money-input {
+    width: 100%;
+}
+
+/* Platform fee alignment */
+#calculatorPage .fee-card {
     display: flex;
-}
-
-.share-box {
+    align-items: center;
     width: 100%;
-    max-width: 500px;
-    background: var(--card-bg, #ffffff);
-    border-radius: 24px 24px 0 0;
-    padding: 24px;
-    animation: shareSlideUp 0.25s ease;
+    padding: 16px 18px;
 }
 
-@keyframes shareSlideUp {
-    from {
-        transform: translateY(100%);
-    }
-
-    to {
-        transform: translateY(0);
-    }
+#calculatorPage .fee-icon {
+    flex-shrink: 0;
 }
 
-.share-header {
+#calculatorPage .fee-content {
+    min-width: 0;
+}
+
+#calculatorPage .fee-content strong,
+#calculatorPage .fee-content span {
+    overflow-wrap: break-word;
+}
+
+/* Tip section */
+#calculatorPage .tip-buttons {
+    width: 100%;
+    margin-top: 14px;
+}
+
+#calculatorPage .tip-btn {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Custom tip input */
+#calculatorPage #customTipContainer {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Discount section */
+#calculatorPage .discount-card {
+    width: 100%;
+}
+
+#calculatorPage .discount-card p {
+    line-height: 1.5;
+}
+
+/* Discount saving alignment */
+#calculatorPage .discount-saving {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.share-header h3 {
-    margin: 0;
-    font-size: 21px;
-}
-
-.close-btn {
-    border: none;
-    background: transparent;
-    font-size: 28px;
-    cursor: pointer;
-}
-
-.share-box p {
-    margin: 8px 0 20px;
-    opacity: 0.7;
-}
-
-.share-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.share-option {
-    border: 1px solid #ddd;
-    background: transparent;
-    border-radius: 14px;
-    padding: 16px 10px;
-    cursor: pointer;
+/* Coupon section */
+#calculatorPage .applied-coupon {
+    width: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    font-size: 14px;
+    flex-wrap: wrap;
 }
 
-.share-option span:first-child {
+/* People section */
+#calculatorPage .split-toggle {
+    width: 100%;
+}
+
+#calculatorPage .person-row {
+    width: 100%;
+    align-items: center;
+}
+
+/* Prevent person inputs from overflowing */
+#calculatorPage .person-row input {
+    width: 100%;
+    min-width: 0;
+}
+
+/* People add button */
+#calculatorPage #addPersonBtn {
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Payment summary */
+#calculatorPage .payment-card {
+    width: 100%;
+}
+
+#calculatorPage .payment-row {
+    width: 100%;
+    gap: 15px;
+}
+
+#calculatorPage .payment-row span {
+    min-width: 0;
+}
+
+#calculatorPage .payment-row strong {
+    flex-shrink: 0;
+}
+
+/* Bill summary */
+#calculatorPage .summary-card {
+    width: 100%;
+}
+
+#calculatorPage .summary-row {
+    width: 100%;
+    gap: 15px;
+}
+
+#calculatorPage .summary-row span {
+    min-width: 0;
+}
+
+#calculatorPage .summary-row strong {
+    flex-shrink: 0;
+}
+
+/* Final amount */
+#calculatorPage .final-row {
+    width: 100%;
+    gap: 15px;
+}
+
+#calculatorPage .final-row span {
+    min-width: 0;
+}
+
+#calculatorPage .final-row strong {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* Photo section */
+#calculatorPage .photo-section {
+    width: 100%;
+}
+
+#calculatorPage .photo-section .secondary-btn {
+    width: 100%;
+}
+
+/* Bill preview */
+#calculatorPage .bill-preview {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Save / Share buttons */
+#calculatorPage .big-btn {
+    width: 100%;
+    display: block;
+}
+
+/* If Save and Share are inside a button group */
+#calculatorPage .action-buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#calculatorPage .action-buttons button {
+    width: 100%;
+    margin: 0;
+}
+
+/* =========================================================
+   MOBILE NEW BILL ALIGNMENT
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    #calculatorPage .page-title {
+        margin-bottom: 14px;
+    }
+
+    #calculatorPage .card,
+    #calculatorPage .fee-card,
+    #calculatorPage .discount-card,
+    #calculatorPage .payment-card,
+    #calculatorPage .summary-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    /* Better heading spacing */
+    #calculatorPage .card-heading {
+        gap: 8px;
+    }
+
+    #calculatorPage .card-heading h3 {
+        font-size: 15px;
+    }
+
+    /* Fee card */
+    #calculatorPage .fee-card {
+        gap: 10px;
+    }
+
+    #calculatorPage .fee-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Tip buttons */
+    #calculatorPage .tip-buttons {
+        gap: 7px;
+    }
+
+    #calculatorPage .tip-btn {
+        padding: 10px 4px;
+        font-size: 12px;
+    }
+
+    /* People rows */
+    #calculatorPage .person-row {
+        grid-template-columns: minmax(0, 1fr) 82px 35px;
+        gap: 6px;
+    }
+
+    #calculatorPage .person-row input {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+
+    /* Payment rows */
+    #calculatorPage .payment-row,
+    #calculatorPage .summary-row {
+        font-size: 12px;
+    }
+
+    /* Final total */
+    #calculatorPage .final-row span {
+        font-size: 15px;
+    }
+
+    #calculatorPage .final-row strong {
+        font-size: 21px;
+    }
+
+    /* Save + Share */
+    #calculatorPage .action-buttons {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    #calculatorPage .card,
+    #calculatorPage .fee-card,
+    #calculatorPage .discount-card,
+    #calculatorPage .payment-card,
+    #calculatorPage .summary-card {
+        padding: 14px;
+    }
+
+    #calculatorPage .person-row {
+        grid-template-columns: minmax(0, 1fr) 70px 32px;
+        gap: 5px;
+    }
+
+    #calculatorPage .person-row input {
+        font-size: 12px;
+    }
+
+    #calculatorPage .tip-btn {
+        font-size: 11px;
+    }
+}
+/* =========================================================
+   NEW BILL HEADER - EXACT ALIGNMENT
+========================================================= */
+
+#calculatorPage .page-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    width: 100%;
+    min-height: 64px;
+    margin-bottom: 18px;
+}
+
+/* Back arrow */
+#calculatorPage .page-title .back-btn {
+    position: static;
+    transform: none;
+
+    width: 50px;
+    height: 50px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+    font-size: 24px;
+}
+
+/* Text container */
+#calculatorPage .page-title > div {
+    flex: 1;
+    width: auto;
+    text-align: left;
+}
+
+/* New Bill heading */
+#calculatorPage .page-title h2 {
+    text-align: left;
+    margin: 0;
     font-size: 28px;
+    line-height: 1.15;
 }
 
-.share-option:hover {
-    background: #f5f5f5;
+/* Subtitle */
+#calculatorPage .page-title p {
+    text-align: left;
+    margin: 5px 0 0;
+    font-size: 15px;
+    color: var(--muted);
 }
 
-/* DESKTOP */
 
-@media (min-width: 800px) {
+/* Mobile */
+@media (max-width: 480px) {
 
-    .bottom-nav {
-        max-width: 720px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 18px 18px 0 0;
+    #calculatorPage .page-title {
+        gap: 14px;
+        min-height: 58px;
     }
 
-    .modal {
-        align-items: center;
+    #calculatorPage .page-title .back-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
     }
 
-    .modal-content {
-        border-radius: 20px;
-        max-height: 80vh;
+    #calculatorPage .page-title h2 {
+        font-size: 25px;
+    }
+
+    #calculatorPage .page-title p {
+        font-size: 14px;
+        margin-top: 4px;
     }
 }
