@@ -8,7 +8,7 @@
    GLOBAL DATA
 ========================= */
 
-const GST_RATE = 5;
+const GST_RATE = 2;
 
 const currencies = {
     INR: "₹",
@@ -101,7 +101,7 @@ const coupons = [
         birthdayOnly: false
     },
 
-    {
+  /*  {
         id: 4,
         code: "BIRTHDAY30",
         title: "30% OFF",
@@ -116,6 +116,7 @@ const coupons = [
         firstBillOnly: false,
         birthdayOnly: true
     },
+    */
 
     {
         id: 5,
