@@ -101,7 +101,7 @@ const coupons = [
         birthdayOnly: false
     },
 
-  /*  {
+   {
         id: 4,
         code: "BIRTHDAY30",
         title: "30% OFF",
@@ -116,7 +116,6 @@ const coupons = [
         firstBillOnly: false,
         birthdayOnly: true
     },
-    */
 
     {
         id: 5,
