@@ -16,16 +16,15 @@
     --danger: #ef4444;
     --warning: #f59e0b;
 
-    --shadow:
-        0 5px 20px rgba(0, 0, 0, 0.06);
+    --shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 
     --radius: 18px;
 }
 
 
-/* =========================
+/* =========================================================
    RESET
-========================= */
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -56,9 +55,9 @@ button {
 }
 
 
-/* =========================
+/* =========================================================
    HEADER
-========================= */
+========================================================= */
 
 .top-header {
     background: var(--card);
@@ -72,20 +71,26 @@ button {
 .logo-area {
     max-width: 720px;
     margin: auto;
+
     display: flex;
     align-items: center;
+
     gap: 12px;
 }
 
 .logo-icon {
     width: 45px;
     height: 45px;
+
     border-radius: 13px;
+
     background: var(--primary);
     color: white;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-size: 22px;
     font-weight: 800;
 }
@@ -102,9 +107,9 @@ button {
 }
 
 
-/* =========================
+/* =========================================================
    MAIN
-========================= */
+========================================================= */
 
 main {
     max-width: 720px;
@@ -120,17 +125,31 @@ main {
     display: block;
 }
 
+
+/* =========================================================
+   PAGE TITLE
+========================================================= */
+
 .page-title {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+
+    gap: 16px;
+
     margin-bottom: 18px;
+    min-height: 70px;
+}
+
+.page-title-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .page-title h2 {
     font-size: 25px;
     font-weight: 800;
+    line-height: 1.2;
 }
 
 .page-title p {
@@ -139,30 +158,67 @@ main {
     margin-top: 4px;
 }
 
-.back-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    background: var(--card);
-    border-radius: 12px;
-    font-size: 22px;
+
+/*
+   IMPORTANT:
+   New Bill alignment
+*/
+
+.new-bill-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 16px;
+
+    padding: 4px 0 6px;
+}
+
+.new-bill-title .back-btn {
+    flex: 0 0 50px;
+}
+
+.new-bill-title .page-title-text {
+    text-align: left;
 }
 
 
-/* =========================
+.back-btn {
+    width: 50px;
+    height: 50px;
+
+    flex-shrink: 0;
+
+    border: 1px solid var(--border);
+    background: var(--card);
+
+    border-radius: 13px;
+
+    font-size: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
    WELCOME
-========================= */
+========================================================= */
 
 .welcome-card {
-    background:
-        linear-gradient(
-            135deg,
-            #16a34a,
-            #15803d
-        );
+    background: linear-gradient(
+        135deg,
+        #16a34a,
+        #15803d
+    );
 
     color: white;
+
     border-radius: 24px;
+
     padding: 25px;
 
     display: flex;
@@ -195,21 +251,26 @@ main {
 }
 
 
-/* =========================
+/* =========================================================
    STATS
-========================= */
+========================================================= */
 
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
+
     gap: 12px;
-    margin-bottom: 16px;
+
+    margin-bottom: 18px;
 }
 
 .stat-card {
     background: var(--card);
+
     border-radius: var(--radius);
+
     padding: 18px;
+
     box-shadow: var(--shadow);
 }
 
@@ -219,21 +280,41 @@ main {
 
 .stat-card small {
     display: block;
+
     color: var(--muted);
+
     margin-top: 10px;
+
     font-size: 12px;
 }
 
 .stat-card strong {
     display: block;
+
     font-size: 22px;
+
     margin-top: 4px;
 }
 
 
-/* =========================
+/* =========================================================
+   CREATE NEW BILL
+========================================================= */
+
+.create-section {
+    margin-top: 4px;
+    margin-bottom: 22px;
+}
+
+.create-section h2 {
+    font-size: 19px;
+    margin-bottom: 12px;
+}
+
+
+/* =========================================================
    CARDS
-========================= */
+========================================================= */
 
 .card,
 .payment-card,
@@ -243,9 +324,13 @@ main {
 .settings-row,
 .danger-card {
     background: var(--card);
+
     border-radius: var(--radius);
+
     padding: 18px;
+
     margin-bottom: 14px;
+
     box-shadow: var(--shadow);
 }
 
@@ -262,79 +347,104 @@ main {
 
 .card-heading {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 12px;
 }
 
 .card-heading p {
     color: var(--muted);
+
     font-size: 12px;
+
     margin-top: 4px;
 }
 
 
-/* =========================
+/* =========================================================
    INPUTS
-========================= */
+========================================================= */
 
 label {
     display: block;
+
     font-size: 12px;
     font-weight: 600;
+
     margin: 14px 0 7px;
 }
 
 input,
 select {
     width: 100%;
+
     border: 1px solid var(--border);
+
     background: var(--card);
     color: var(--text);
+
     border-radius: 12px;
+
     padding: 13px 14px;
+
     outline: none;
+
     font-size: 14px;
 }
 
 input:focus,
 select:focus {
     border-color: var(--primary);
+
     box-shadow:
         0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 
 .money-input {
     display: flex;
+
     align-items: center;
+
     border: 1px solid var(--border);
+
     border-radius: 12px;
+
     overflow: hidden;
 }
 
 .money-input span {
     padding-left: 14px;
+
     font-weight: 700;
 }
 
 .money-input input {
     border: none;
+
     box-shadow: none;
 }
 
 
-/* =========================
+/* =========================================================
    BUTTONS
-========================= */
+========================================================= */
 
 .primary-btn {
     width: 100%;
+
     border: none;
+
     border-radius: 13px;
+
     background: var(--primary);
     color: white;
+
     font-weight: 700;
+
     padding: 13px 16px;
+
     transition: 0.2s;
 }
 
@@ -344,34 +454,49 @@ select:focus {
 
 .big-btn {
     padding: 15px;
+
     font-size: 15px;
+
     margin-bottom: 14px;
 }
 
 .secondary-btn {
     border: 1px solid var(--border);
+
     background: var(--card);
     color: var(--text);
+
     border-radius: 11px;
+
     padding: 11px 14px;
+
     font-weight: 600;
 }
 
 .small-btn {
     border: none;
+
     background: var(--primary-light);
     color: var(--primary-dark);
+
     border-radius: 9px;
+
     padding: 8px 11px;
+
     font-size: 11px;
+
     font-weight: 700;
 }
 
 .text-btn {
     background: none;
+
     border: none;
+
     color: var(--primary);
+
     font-size: 12px;
+
     font-weight: 700;
 }
 
@@ -382,45 +507,65 @@ select:focus {
 
 .danger-btn {
     width: 100%;
+
     border: none;
+
     background: #ef4444;
     color: white;
+
     border-radius: 11px;
+
     padding: 12px;
+
     font-weight: 700;
 }
 
 .full-btn {
     width: 100%;
+
     margin-top: 10px;
 }
 
+.share-main-btn {
+    padding: 13px;
+}
 
-/* =========================
+.whatsapp-btn {
+    padding: 13px;
+}
+
+
+/* =========================================================
    PLATFORM FEE
-========================= */
+========================================================= */
 
 .fee-card {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #ecfdf5,
-            #dcfce7
-        );
+    background: linear-gradient(
+        135deg,
+        #ecfdf5,
+        #dcfce7
+    );
 
     border: 1px solid #bbf7d0;
 }
 
 .fee-icon {
-    width: 42px;
-    height: 42px;
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
     border-radius: 12px;
+
     background: var(--primary);
     color: white;
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -432,49 +577,69 @@ select:focus {
 
 .fee-content strong {
     display: block;
+
     font-size: 14px;
 }
 
 .fee-content span {
     display: block;
+
     color: var(--muted);
+
     font-size: 11px;
+
     margin-top: 3px;
 }
 
 
-/* =========================
+/* =========================================================
    TIP
-========================= */
+========================================================= */
 
 .tip-buttons {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 8px;
+
     margin-top: 15px;
 }
 
 .tip-btn {
     border: 1px solid var(--border);
+
     background: var(--card);
+
+    color: var(--text);
+
     border-radius: 10px;
+
     padding: 10px 5px;
+
     font-weight: 600;
 }
 
 .tip-btn.active {
     background: var(--primary);
+
     color: white;
+
     border-color: var(--primary);
 }
 
+.custom-tip-box {
+    margin-top: 8px;
+}
 
-/* =========================
+
+/* =========================================================
    DISCOUNT
-========================= */
+========================================================= */
 
 .discount-card {
     background: #fffbeb;
+
     border: 1px solid #fde68a;
 }
 
@@ -484,7 +649,9 @@ select:focus {
 
 .discount-saving {
     margin-top: 12px;
+
     font-size: 12px;
+
     color: #92400e;
 }
 
@@ -493,20 +660,25 @@ select:focus {
 }
 
 
-/* =========================
+/* =========================================================
    COUPON
-========================= */
+========================================================= */
 
 .applied-coupon {
     background: var(--primary-light);
+
     border-radius: 10px;
+
     padding: 12px;
+
     margin-top: 14px;
+
     font-size: 12px;
 }
 
 .applied-coupon span {
     color: var(--muted);
+
     margin-left: 8px;
 }
 
@@ -516,123 +688,252 @@ select:focus {
 
 .coupon-card {
     background: var(--card);
+
     border-radius: var(--radius);
+
     padding: 17px;
+
     margin-bottom: 12px;
+
     box-shadow: var(--shadow);
+
     border: 1px solid var(--border);
 }
 
 .coupon-top {
     display: flex;
+
     justify-content: space-between;
+
     gap: 12px;
 }
 
 .coupon-code {
     font-weight: 800;
+
     color: var(--primary-dark);
+
     letter-spacing: 0.5px;
 }
 
 .coupon-top p {
     color: var(--muted);
+
     font-size: 12px;
+
     margin-top: 5px;
 }
 
 .coupon-discount {
     white-space: nowrap;
+
     font-weight: 800;
+
     color: var(--primary);
 }
 
 .coupon-meta {
     display: flex;
+
     flex-wrap: wrap;
+
     gap: 6px;
+
     margin-top: 13px;
 }
 
 .coupon-meta span {
     background: #f3f4f6;
+
     color: #4b5563;
+
     padding: 5px 8px;
+
     border-radius: 6px;
+
     font-size: 10px;
 }
 
 .coupon-apply {
     width: 100%;
+
     margin-top: 13px;
+
     border: none;
+
     background: var(--primary);
     color: white;
+
     border-radius: 9px;
+
     padding: 10px;
+
     font-weight: 700;
 }
 
 
-/* =========================
+/* =========================================================
    PEOPLE
-========================= */
+========================================================= */
 
 .split-toggle {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
+
     background: #f3f4f6;
+
     padding: 4px;
+
     border-radius: 10px;
+
     margin: 15px 0;
 }
 
 .split-btn {
     border: none;
+
     background: transparent;
+
+    color: var(--text);
+
     border-radius: 8px;
+
     padding: 9px;
+
     font-size: 11px;
+
     font-weight: 700;
 }
 
 .split-btn.active {
     background: var(--card);
+
     box-shadow: var(--shadow);
+
     color: var(--primary-dark);
 }
 
+
+/*
+    PERSON ROW
+*/
+
 .person-row {
     display: grid;
-    grid-template-columns: 1fr 105px 38px;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        105px
+        75px
+        38px;
+
     gap: 7px;
+
     margin-bottom: 8px;
+
+    align-items: center;
 }
 
 .person-row input {
     min-width: 0;
+
     padding: 10px;
 }
 
-.person-remove {
+
+/*
+    MARK AS PAID BUTTON
+*/
+
+.person-status {
+    width: 100%;
+
+    min-height: 40px;
+
     border: none;
+
     border-radius: 9px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.person-status.paid {
+    background: #dcfce7;
+
+    color: #15803d;
+}
+
+.person-status.unpaid {
     background: #fee2e2;
+
     color: #dc2626;
 }
 
+.person-status:hover {
+    opacity: 0.82;
+}
 
-/* =========================
+
+/*
+    REMOVE PERSON
+*/
+
+.person-remove {
+    width: 38px;
+    height: 40px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
    PAYMENT
-========================= */
+========================================================= */
+
+.payment-card {
+    box-shadow: none;
+
+    border: 1px solid var(--border);
+
+    margin-top: 14px;
+
+    margin-bottom: 0;
+
+    padding: 14px;
+}
+
+.payment-card h3 {
+    margin-bottom: 6px;
+}
 
 .payment-row,
 .summary-row,
 .detail-row {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
+    gap: 15px;
+
     padding: 9px 0;
+
     font-size: 13px;
 }
 
@@ -641,9 +942,9 @@ select:focus {
 }
 
 
-/* =========================
+/* =========================================================
    SUMMARY
-========================= */
+========================================================= */
 
 .summary-card {
     border: 1px solid #bbf7d0;
@@ -655,65 +956,108 @@ select:focus {
 
 .summary-divider {
     height: 1px;
+
     background: var(--border);
+
     margin: 8px 0;
 }
 
 .final-row {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
     padding-top: 10px;
 }
 
 .final-row span {
     font-size: 16px;
+
     font-weight: 700;
 }
 
 .final-row strong {
     font-size: 23px;
+
     color: var(--primary-dark);
 }
 
 
-/* =========================
+/* =========================================================
    PHOTO
-========================= */
+========================================================= */
 
 .photo-section {
     margin-top: 15px;
 }
 
+.photo-button {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    min-height: 44px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    margin: 0;
+
+    background: var(--card);
+}
+
 .bill-preview {
     display: none;
+
     width: 100%;
+
     max-height: 250px;
+
     object-fit: contain;
+
     margin-top: 12px;
+
     border-radius: 12px;
+
     border: 1px solid var(--border);
 }
 
 .remove-photo-btn {
     display: none;
+
     border: none;
+
     background: none;
+
     color: var(--danger);
+
     font-size: 11px;
+
     font-weight: 700;
+
     margin-top: 8px;
 }
 
 
-/* =========================
+/* =========================================================
    HISTORY
-========================= */
+========================================================= */
 
 .section-heading {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
     margin: 24px 0 12px;
 }
 
@@ -723,16 +1067,23 @@ select:focus {
 
 .bill-card {
     background: var(--card);
+
     border-radius: var(--radius);
+
     padding: 16px;
+
     margin-bottom: 10px;
+
     box-shadow: var(--shadow);
+
     cursor: pointer;
 }
 
 .bill-card-top {
     display: flex;
+
     justify-content: space-between;
+
     gap: 10px;
 }
 
@@ -742,61 +1093,91 @@ select:focus {
 
 .bill-card .date {
     color: var(--muted);
+
     font-size: 10px;
+
     margin-top: 4px;
 }
 
 .bill-total {
     color: var(--primary-dark);
+
     font-weight: 800;
 }
 
 .bill-card-bottom {
     display: flex;
+
     justify-content: space-between;
+
+    gap: 10px;
+
     margin-top: 13px;
+
     padding-top: 10px;
+
     border-top: 1px solid var(--border);
+
     color: var(--muted);
+
     font-size: 10px;
 }
 
 .empty-state {
     text-align: center;
+
     padding: 35px 15px;
+
     color: var(--muted);
 }
 
 .empty-state div {
     font-size: 35px;
+
     margin-bottom: 10px;
 }
 
 .empty-state h3 {
     color: var(--text);
+
     margin-bottom: 5px;
 }
 
 
-/* =========================
+/* =========================================================
    SETTINGS
-========================= */
+========================================================= */
 
 .settings-row {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
+    gap: 15px;
 }
 
 .settings-row p,
 .danger-card p {
     color: var(--muted);
+
     font-size: 11px;
+
     margin-top: 4px;
+}
+
+.settings-row select {
+    width: 130px;
+}
+
+.settings-row input[type="date"] {
+    width: 150px;
 }
 
 .muted {
     color: var(--muted);
+
     font-size: 12px;
 }
 
@@ -810,21 +1191,28 @@ select:focus {
 
 .version {
     text-align: center;
+
     color: var(--muted);
+
     font-size: 11px;
+
     padding: 15px;
 }
 
 
-/* =========================
+/* =========================================================
    SWITCH
-========================= */
+========================================================= */
 
 .switch {
     position: relative;
+
     width: 48px;
     height: 26px;
+
     margin: 0;
+
+    flex-shrink: 0;
 }
 
 .switch input {
@@ -833,21 +1221,31 @@ select:focus {
 
 .slider {
     position: absolute;
+
     inset: 0;
+
     background: #d1d5db;
+
     border-radius: 30px;
+
     transition: 0.2s;
 }
 
 .slider::before {
     content: "";
+
     position: absolute;
+
     width: 20px;
     height: 20px;
+
     left: 3px;
     top: 3px;
+
     background: white;
+
     border-radius: 50%;
+
     transition: 0.2s;
 }
 
@@ -860,40 +1258,58 @@ select:focus {
 }
 
 
-/* =========================
+/* =========================================================
    MODALS
-========================= */
+========================================================= */
 
 .modal {
     display: none;
+
     position: fixed;
+
     inset: 0;
+
     background: rgba(0, 0, 0, 0.5);
+
     z-index: 100;
+
     padding: 20px;
+
     overflow-y: auto;
 }
 
 .modal.active {
     display: flex;
+
     align-items: center;
     justify-content: center;
 }
 
 .modal-box {
     width: 100%;
+
     max-width: 600px;
+
     max-height: 90vh;
+
     overflow-y: auto;
+
     background: var(--card);
+
     border-radius: 20px;
+
     padding: 20px;
 }
 
 .modal-header {
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
+    gap: 15px;
+
     margin-bottom: 15px;
 }
 
@@ -903,26 +1319,35 @@ select:focus {
 
 .modal-header p {
     color: var(--muted);
+
     font-size: 11px;
+
     margin-top: 4px;
 }
 
 .close-btn {
     width: 35px;
     height: 35px;
+
+    flex-shrink: 0;
+
     border: none;
+
     background: #f3f4f6;
+
     border-radius: 10px;
+
     font-size: 22px;
 }
 
 
-/* =========================
+/* =========================================================
    DETAILS
-========================= */
+========================================================= */
 
 .detail-section {
     padding: 13px 0;
+
     border-bottom: 1px solid var(--border);
 }
 
@@ -932,7 +1357,9 @@ select:focus {
 
 .detail-total {
     font-size: 16px;
+
     font-weight: 800;
+
     margin-top: 5px;
 }
 
@@ -940,20 +1367,50 @@ select:focus {
     color: var(--primary-dark);
 }
 
+.detail-person {
+    display: flex;
 
-/* =========================
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: 13px;
+}
+
+.paid-label {
+    color: #15803d;
+
+    font-weight: 700;
+}
+
+.unpaid-label {
+    color: #dc2626;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
    TOAST
-========================= */
+========================================================= */
 
 .toast {
     position: fixed;
+
     left: 50%;
+
     bottom: 85px;
 
-    transform:
-        translate(-50%, 20px);
+    transform: translate(-50%, 20px);
 
     background: #111827;
+
     color: white;
 
     padding: 12px 17px;
@@ -963,6 +1420,7 @@ select:focus {
     font-size: 12px;
 
     opacity: 0;
+
     pointer-events: none;
 
     transition: 0.25s;
@@ -970,20 +1428,20 @@ select:focus {
     z-index: 200;
 
     max-width: 90%;
+
     text-align: center;
 }
 
 .toast.show {
     opacity: 1;
 
-    transform:
-        translate(-50%, 0);
+    transform: translate(-50%, 0);
 }
 
 
-/* =========================
+/* =========================================================
    BOTTOM NAV
-========================= */
+========================================================= */
 
 .bottom-nav {
     position: fixed;
@@ -995,9 +1453,11 @@ select:focus {
     height: 70px;
 
     background: var(--card);
+
     border-top: 1px solid var(--border);
 
     display: flex;
+
     justify-content: center;
 
     z-index: 50;
@@ -1005,15 +1465,19 @@ select:focus {
 
 .nav-item {
     width: 20%;
+
     max-width: 110px;
 
     border: none;
+
     background: transparent;
 
     color: var(--muted);
 
     display: flex;
+
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
 
@@ -1033,36 +1497,41 @@ select:focus {
 }
 
 
-/* =========================
+/* =========================================================
    DARK MODE
-========================= */
+========================================================= */
 
 body.dark {
     --background: #0f1712;
+
     --card: #18221b;
+
     --text: #f3f4f6;
+
     --muted: #9ca3af;
+
     --border: #2d3a31;
 
     --primary-light: #173c25;
 }
 
 body.dark .welcome-card {
-    background:
-        linear-gradient(
-            135deg,
-            #15803d,
-            #166534
-        );
+    background: linear-gradient(
+        135deg,
+        #15803d,
+        #166534
+    );
 }
 
 body.dark .discount-card {
     background: #302712;
+
     border-color: #695315;
 }
 
 body.dark .fee-card {
     background: #102d1c;
+
     border-color: #225b38;
 }
 
@@ -1072,6 +1541,7 @@ body.dark .split-toggle {
 
 body.dark .coupon-meta span {
     background: #243028;
+
     color: #cbd5e1;
 }
 
@@ -1079,10 +1549,14 @@ body.dark .close-btn {
     background: #273229;
 }
 
+body.dark .photo-button {
+    background: var(--card);
+}
 
-/* =========================
+
+/* =========================================================
    RESPONSIVE
-========================= */
+========================================================= */
 
 @media (min-width: 800px) {
 
@@ -1096,10 +1570,25 @@ body.dark .close-btn {
 
         width: 720px;
 
-        transform:
-            translateX(-50%);
+        transform: translateX(-50%);
 
         border-radius: 18px 18px 0 0;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .person-row {
+        grid-template-columns:
+            minmax(0, 1fr)
+            80px
+            68px
+            36px;
+    }
+
+    .person-status {
+        font-size: 9px;
     }
 
 }
@@ -1123,8 +1612,58 @@ body.dark .close-btn {
         font-size: 42px;
     }
 
+    .page-title h2 {
+        font-size: 24px;
+    }
+
+    .new-bill-title {
+        gap: 14px;
+    }
+
+    .new-bill-title .back-btn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .tip-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
     .person-row {
-        grid-template-columns: 1fr 85px 35px;
+        grid-template-columns:
+            minmax(0, 1fr)
+            75px
+            65px
+            34px;
+
+        gap: 5px;
+    }
+
+    .person-row input {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .person-status {
+        min-height: 38px;
+        font-size: 8px;
+    }
+
+    .person-remove {
+        width: 34px;
+        height: 38px;
+    }
+
+    .settings-row {
+        align-items: flex-start;
+    }
+
+    .settings-row select {
+        width: 110px;
+    }
+
+    .settings-row input[type="date"] {
+        width: 135px;
     }
 
 }
