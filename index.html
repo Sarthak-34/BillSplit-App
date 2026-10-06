@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BillSplit</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header class="top-header">
+        <div>
+            <h1>Bill<span>Split</span></h1>
+            <p>Split bills. Save money.</p>
+        </div>
+
+        <button class="icon-btn" id="themeBtn" title="Dark Mode">
+            🌙
+        </button>
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
+        <!-- HOME -->
+        <section id="homePage" class="page active">
+
+            <div class="welcome-card">
+                <div>
+                    <p class="small-text">Welcome to</p>
+                    <h2>BillSplit</h2>
+                    <p>Calculate, split and share your bills easily.</p>
+                </div>
+
+                <div class="welcome-icon">
+                    💰
+                </div>
+            </div>
+
+
+            <!-- STATS -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span>🧾</span>
+                    <div>
+                        <small>Total Bills</small>
+                        <strong id="totalBills">0</strong>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <span>💰</span>
+                    <div>
+                        <small>Total Saved</small>
+                        <strong id="totalSaved">₹0</strong>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- START BILL -->
+            <div class="section-title">
+                <h3>Create New Bill</h3>
+            </div>
+
+            <button class="primary-btn big-btn" onclick="openCalculator()">
+                <span>➕</span>
+                Start New Bill
+            </button>
+
+
+            <!-- RECENT BILLS -->
+            <div class="section-title">
+                <h3>Recent Bills</h3>
+                <button onclick="showPage('historyPage')">View All</button>
+            </div>
+
+            <div id="recentBills" class="bill-list">
+                <div class="empty-state">
+                    <div>🧾</div>
+                    <h3>No bills yet</h3>
+                    <p>Create your first bill to see it here.</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- CALCULATOR -->
+        <section id="calculatorPage" class="page">
+
+            <div class="page-header">
+                <button class="back-btn" onclick="showPage('homePage')">←</button>
+
+                <div>
+                    <h2>New Bill</h2>
+                    <p>Calculate and split your bill</p>
+                </div>
+            </div>
+
+
+            <!-- BILL DETAILS -->
+            <div class="card">
+
+                <h3>Bill Details</h3>
+
+                <label>Bill Name</label>
+
+                <input
+                    type="text"
+                    id="billName"
+                    placeholder="e.g. Dinner at ABC"
+                >
+
+
+                <label>Bill Amount</label>
+
+                <div class="amount-input">
+                    <span id="currencySymbol">₹</span>
+
+                    <input
+                        type="number"
+                        id="billAmount"
+                        placeholder="0.00"
+                        min="0"
+                        oninput="calculateBill()"
+                    >
+                </div>
+
+
+                <!-- CAMERA -->
+                <label class="camera-label">Bill Photo (Optional)</label>
+
+                <div class="camera-area">
+
+                    <button class="camera-btn" onclick="openCamera()">
+                        📷
+                        <span>Take Bill Photo</span>
+                    </button>
+
+                    <input
+                        type="file"
+                        id="billPhoto"
+                        accept="image/*"
+                        capture="environment"
+                        hidden
+                    >
+
+                    <img id="billPreview" class="bill-preview" alt="Bill Preview">
+
+                    <button
+                        id="removePhotoBtn"
+                        class="remove-photo"
+                        onclick="removeBillPhoto()"
+                        style="display:none;"
+                    >
+                        Remove Photo
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- GST -->
+            <div class="card">
+
+                <div class="row-between">
+                    <div>
+                        <h3>GST</h3>
+                        <p class="muted">Automatically calculated</p>
+                    </div>
+
+                    <span class="badge green">5%</span>
+                </div>
+
+                <div class="calculation-preview">
+                    <span>GST Amount</span>
+                    <strong id="gstAmount">₹0.00</strong>
+                </div>
+
+            </div>
+
+
+            <!-- TIP -->
+            <div class="card">
+
+                <div class="row-between">
+                    <div>
+                        <h3>Tip</h3>
+                        <p class="muted">Optional</p>
+                    </div>
+
+                    <span id="tipAmount">₹0.00</span>
+                </div>
+
+                <div class="tip-options">
+
+                    <button class="tip-btn active" data-tip="0" onclick="selectTip(0,this)">
+                        No Tip
+                    </button>
+
+                    <button class="tip-btn" data-tip="5" onclick="selectTip(5,this)">
+                        5%
+                    </button>
+
+                    <button class="tip-btn" data-tip="10" onclick="selectTip(10,this)">
+                        10%
+                    </button>
+
+                    <button class="tip-btn" data-tip="15" onclick="selectTip(15,this)">
+                        15%
+                    </button>
+
+                    <button class="tip-btn" data-tip="20" onclick="selectTip(20,this)">
+                        20%
+                    </button>
+
+                    <button class="tip-btn" onclick="customTip()">
+                        Custom
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- AUTOMATIC DISCOUNT -->
+            <div class="card discount-card">
+
+                <div class="row-between">
+
+                    <div>
+                        <h3>Automatic Discount</h3>
+                        <p class="muted">Based on bill amount</p>
+                    </div>
+
+                    <span class="discount-badge" id="discountPercent">
+                        0%
+                    </span>
+
+                </div>
+
+                <div class="discount-info">
+
+                    <div>
+                        <span>Eligible Discount</span>
+                        <strong id="discountAmount">₹0.00</strong>
+                    </div>
+
+                    <p id="discountMessage">
+                        Add bill amount to calculate discount.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- COUPON -->
+            <div class="card">
+
+                <div class="row-between">
+                    <div>
+                        <h3>Coupon</h3>
+                        <p class="muted">Only one coupon can be used</p>
+                    </div>
+
+                    <button class="small-btn" onclick="openCouponModal()">
+                        Apply
+                    </button>
+                </div>
+
+                <div id="appliedCoupon" class="applied-coupon hidden">
+                </div>
+
+            </div>
+
+
+            <!-- PEOPLE -->
+            <div class="card">
+
+                <div class="row-between">
+
+                    <div>
+                        <h3>People</h3>
+                        <p class="muted">Split your bill</p>
+                    </div>
+
+                    <button class="small-btn" onclick="addPerson()">
+                        + Person
+                    </button>
+
+                </div>
+
+
+                <div class="split-options">
+
+                    <button
+                        id="equalSplitBtn"
+                        class="split-btn active"
+                        onclick="setSplitMode('equal')"
+                    >
+                        Equal Split
+                    </button>
+
+                    <button
+                        id="customSplitBtn"
+                        class="split-btn"
+                        onclick="setSplitMode('custom')"
+                    >
+                        Custom Split
+                    </button>
+
+                </div>
+
+
+                <div id="peopleList"></div>
+
+
+                <div class="payment-summary">
+
+                    <div>
+                        <span>Paid</span>
+                        <strong id="paidAmount">₹0.00</strong>
+                    </div>
+
+                    <div>
+                        <span>Remaining</span>
+                        <strong id="remainingAmount">₹0.00</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BILL SUMMARY -->
+            <div class="summary-card">
+
+                <h3>Bill Summary</h3>
+
+                <div class="summary-row">
+                    <span>Bill Amount</span>
+                    <strong id="summarySubtotal">₹0.00</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>GST (18%)</span>
+                    <strong id="summaryGST">₹0.00</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Tip</span>
+                    <strong id="summaryTip">₹0.00</strong>
+                </div>
+
+                <div class="summary-row discount-row">
+                    <span>Automatic Discount</span>
+                    <strong id="summaryDiscount">-₹0.00</strong>
+                </div>
+
+                <div class="summary-row coupon-row">
+                    <span>Coupon</span>
+                    <strong id="summaryCoupon">-₹0.00</strong>
+                </div>
+
+                <div class="summary-total">
+                    <span>Final Total</span>
+                    <strong id="finalTotal">₹0.00</strong>
+                </div>
+
+            </div>
+
+
+            <button class="primary-btn big-btn" onclick="saveBill()">
+                💾 Save Bill
+            </button>
+
+        </section>
+
+
+        <!-- COUPONS -->
+        <section id="couponsPage" class="page">
+
+            <div class="page-header">
+                <div>
+                    <h2>Coupons</h2>
+                    <p>Save more on your bills</p>
+                </div>
+            </div>
+
+            <div id="couponList"></div>
+
+        </section>
+
+
+        <!-- HISTORY -->
+        <section id="historyPage" class="page">
+
+            <div class="page-header">
+
+                <div>
+                    <h2>Bill History</h2>
+                    <p>Your saved bills</p>
+                </div>
+
+                <button class="small-btn danger" onclick="clearHistory()">
+                    Clear
+                </button>
+
+            </div>
+
+            <div id="historyList"></div>
+
+        </section>
+
+
+        <!-- SETTINGS -->
+        <section id="settingsPage" class="page">
+
+            <div class="page-header">
+
+                <div>
+                    <h2>Settings</h2>
+                    <p>Customize BillSplit</p>
+                </div>
+
+            </div>
+
+
+            <div class="card settings-card">
+
+                <h3>Preferences</h3>
+
+                <div class="setting-row">
+
+                    <div>
+                        <strong>Currency</strong>
+                        <p>Choose your currency</p>
+                    </div>
+
+                    <select id="currencySelect" onchange="changeCurrency()">
+
+                        <option value="INR">₹ INR</option>
+                        <option value="USD">$ USD</option>
+                        <option value="EUR">€ EUR</option>
+                        <option value="GBP">£ GBP</option>
+                        <option value="AED">د.إ AED</option>
+                        <option value="CAD">$ CAD</option>
+                        <option value="AUD">$ AUD</option>
+                        <option value="SGD">$ SGD</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="setting-row">
+
+                    <div>
+                        <strong>Dark Mode</strong>
+                        <p>Change app appearance</p>
+                    </div>
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            id="darkModeToggle"
+                            onchange="toggleDarkMode()"
+                        >
+
+                        <span class="slider"></span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="setting-row birthday-setting">
+
+                    <div>
+                        <strong>Birthday</strong>
+                        <p>Used for birthday coupons</p>
+                    </div>
+
+                    <input
+                        type="date"
+                        id="birthdayInput"
+                        onchange="saveBirthday()"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Data</h3>
+
+                <button class="setting-button" onclick="clearAllData()">
+                    🗑️ Clear All App Data
+                </button>
+
+            </div>
+
+
+            <div class="about">
+
+                <h2>BillSplit</h2>
+
+                <p>Split bills. Save money.</p>
+
+                <small>Version 1.0.0</small>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+
+        <button
+            class="nav-item active"
+            onclick="showPage('homePage',this)"
+        >
+            <span>🏠</span>
+            <small>Home</small>
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showPage('calculatorPage',this)"
+        >
+            <span>➕</span>
+            <small>New Bill</small>
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showPage('couponsPage',this)"
+        >
+            <span>🎟️</span>
+            <small>Coupons</small>
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showPage('historyPage',this)"
+        >
+            <span>🧾</span>
+            <small>History</small>
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showPage('settingsPage',this)"
+        >
+            <span>⚙️</span>
+            <small>Settings</small>
+        </button>
+
+    </nav>
+
+</div>
+
+
+<!-- COUPON MODAL -->
+<div id="couponModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>Choose Coupon</h2>
+                <p>Only one coupon can be applied.</p>
+            </div>
+
+            <button onclick="closeCouponModal()">✕</button>
+
+        </div>
+
+        <div id="modalCouponList"></div>
+
+    </div>
+
+</div>
+
+
+<!-- BILL DETAILS MODAL -->
+<div id="billDetailsModal" class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Bill Details</h2>
+
+            <button onclick="closeBillDetails()">✕</button>
+
+        </div>
+
+        <div id="billDetails"></div>
+
+    </div>
+
+</div>
+
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
