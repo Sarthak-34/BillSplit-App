@@ -1,16 +1,74 @@
 /* =========================================================
    BillSplit
    Vanilla JavaScript
-   ========================================================= */
+   Platform Fee = 2%
+========================================================= */
+
+
+/* =========================
+   STORAGE HELPERS
+========================= */
+
+function readStorageArray(key) {
+
+    try {
+
+        const data =
+            JSON.parse(
+                localStorage.getItem(key) || "[]"
+            );
+
+        return Array.isArray(data) ? data : [];
+
+    } catch (error) {
+
+        return [];
+
+    }
+
+}
+
+
+function readStorageObject(key, fallback) {
+
+    try {
+
+        const data =
+            JSON.parse(
+                localStorage.getItem(key) || "null"
+            );
+
+        if (
+            data &&
+            typeof data === "object" &&
+            !Array.isArray(data)
+        ) {
+
+            return {
+                ...fallback,
+                ...data
+            };
+
+        }
+
+    } catch (error) {}
+
+    return {
+        ...fallback
+    };
+
+}
 
 
 /* =========================
    GLOBAL DATA
 ========================= */
 
-const GST_RATE = 2;
+const PLATFORM_FEE_RATE = 2;
+
 
 const currencies = {
+
     INR: "₹",
     USD: "$",
     EUR: "€",
@@ -19,31 +77,47 @@ const currencies = {
     CAD: "$",
     AUD: "$",
     SGD: "$"
+
 };
 
-let bills = JSON.parse(localStorage.getItem("billsplit_bills")) || [];
 
-let settings = JSON.parse(
-    localStorage.getItem("billsplit_settings")
-) || {
-    currency: "INR",
-    darkMode: false,
-    birthday: ""
-};
+let bills =
+    readStorageArray(
+        "billsplit_bills"
+    );
 
-let couponHistory = JSON.parse(
-    localStorage.getItem("billsplit_coupon_history")
-) || [];
+
+let settings =
+    readStorageObject(
+        "billsplit_settings",
+        {
+            currency: "INR",
+            darkMode: false,
+            birthday: ""
+        }
+    );
+
+
+let couponHistory =
+    readStorageArray(
+        "billsplit_coupon_history"
+    );
+
 
 let people = [];
 
+
 let splitMode = "equal";
+
 
 let selectedTip = 0;
 
+
 let customTipValue = null;
 
+
 let appliedCoupon = null;
+
 
 let billPhotoData = null;
 
@@ -53,6 +127,7 @@ let billPhotoData = null;
 ========================= */
 
 const coupons = [
+
     {
         id: 1,
         code: "WELCOME50",
@@ -101,7 +176,7 @@ const coupons = [
         birthdayOnly: false
     },
 
-   {
+    {
         id: 4,
         code: "BIRTHDAY30",
         title: "30% OFF",
@@ -132,6 +207,7 @@ const coupons = [
         firstBillOnly: false,
         birthdayOnly: false
     }
+
 ];
 
 
@@ -139,21 +215,28 @@ const coupons = [
    INITIALIZATION
 ========================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    loadSettings();
+        loadSettings();
 
-    updateCurrencyUI();
+        updateCurrencyUI();
 
-    renderCoupons();
+        renderCoupons();
 
-    renderHistory();
+        renderHistory();
 
-    updateDashboard();
+        updateDashboard();
 
-    resetPeople();
+        resetPeople();
 
-});
+        setupPhotoInput();
+
+        calculateBill();
+
+    }
+);
 
 
 /* =========================
@@ -162,10 +245,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function saveBills() {
 
-    localStorage.setItem(
-        "billsplit_bills",
-        JSON.stringify(bills)
-    );
+    try {
+
+        localStorage.setItem(
+            "billsplit_bills",
+            JSON.stringify(bills)
+        );
+
+    } catch (error) {
+
+        showToast(
+            "Unable to save bills. Storage may be full."
+        );
+
+    }
 
 }
 
@@ -196,29 +289,70 @@ function saveCouponHistory() {
 
 function loadSettings() {
 
-    document.getElementById("currencySelect").value =
-        settings.currency;
+    const currencySelect =
+        document.getElementById(
+            "currencySelect"
+        );
 
-    document.getElementById("birthdayInput").value =
-        settings.birthday || "";
+    const birthdayInput =
+        document.getElementById(
+            "birthdayInput"
+        );
 
-    document.getElementById("darkModeToggle").checked =
-        settings.darkMode;
+    const darkModeToggle =
+        document.getElementById(
+            "darkModeToggle"
+        );
 
-    if (settings.darkMode) {
 
-        document.body.classList.add("dark");
+    if (currencySelect) {
+
+        currencySelect.value =
+            currencies[settings.currency]
+                ? settings.currency
+                : "INR";
 
     }
+
+
+    if (birthdayInput) {
+
+        birthdayInput.value =
+            settings.birthday || "";
+
+    }
+
+
+    if (darkModeToggle) {
+
+        darkModeToggle.checked =
+            Boolean(settings.darkMode);
+
+    }
+
+
+    document.body.classList.toggle(
+        "dark",
+        Boolean(settings.darkMode)
+    );
 
 }
 
 
 function changeCurrency() {
 
-    const select = document.getElementById("currencySelect");
+    const select =
+        document.getElementById(
+            "currencySelect"
+        );
 
-    settings.currency = select.value;
+
+    if (!select) return;
+
+
+    settings.currency =
+        select.value;
+
 
     saveSettings();
 
@@ -226,11 +360,15 @@ function changeCurrency() {
 
     calculateBill();
 
+    renderCoupons();
+
     renderHistory();
 
     updateDashboard();
 
-    showToast("Currency updated");
+    showToast(
+        "Currency updated"
+    );
 
 }
 
@@ -238,23 +376,43 @@ function changeCurrency() {
 function updateCurrencyUI() {
 
     const symbol =
-        currencies[settings.currency] || "₹";
+        currencies[settings.currency] ||
+        "₹";
 
-    document.getElementById("currencySymbol").textContent =
-        symbol;
+
+    const element =
+        document.getElementById(
+            "currencySymbol"
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            symbol;
+
+    }
 
 }
 
 
 function toggleDarkMode() {
 
+    const toggle =
+        document.getElementById(
+            "darkModeToggle"
+        );
+
+
     settings.darkMode =
-        document.getElementById("darkModeToggle").checked;
+        Boolean(toggle && toggle.checked);
+
 
     document.body.classList.toggle(
         "dark",
         settings.darkMode
     );
+
 
     saveSettings();
 
@@ -263,12 +421,23 @@ function toggleDarkMode() {
 
 function saveBirthday() {
 
+    const input =
+        document.getElementById(
+            "birthdayInput"
+        );
+
+
     settings.birthday =
-        document.getElementById("birthdayInput").value;
+        input
+            ? input.value
+            : "";
+
 
     saveSettings();
 
-    showToast("Birthday saved");
+    showToast(
+        "Birthday saved"
+    );
 
 }
 
@@ -277,45 +446,91 @@ function saveBirthday() {
    NAVIGATION
 ========================= */
 
-function showPage(pageId, navButton = null) {
+function setActiveNav(button) {
 
-    document.querySelectorAll(".page").forEach(page => {
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(
+            item =>
+                item.classList.remove("active")
+        );
 
-        page.classList.remove("active");
 
-    });
+    if (button) {
 
-    const page =
-        document.getElementById(pageId);
-
-    if (page) {
-
-        page.classList.add("active");
+        button.classList.add("active");
 
     }
 
+}
 
-    document.querySelectorAll(".nav-item").forEach(button => {
 
-        button.classList.remove("active");
+function showPage(
+    pageId,
+    navButton = null
+) {
 
-    });
+    document
+        .querySelectorAll(".page")
+        .forEach(
+            page =>
+                page.classList.remove("active")
+        );
+
+
+    const page =
+        document.getElementById(
+            pageId
+        );
+
+
+    if (!page) return;
+
+
+    page.classList.add("active");
 
 
     if (navButton) {
 
-        navButton.classList.add("active");
+        setActiveNav(navButton);
 
     } else {
 
-        const matchingButton =
-            document.querySelector(
-                `.nav-item[onclick*="'${pageId}'"]`
+        const buttons =
+            document.querySelectorAll(
+                ".nav-item"
             );
+
+
+        buttons.forEach(button => {
+
+            button.classList.remove(
+                "active"
+            );
+
+        });
+
+
+        const matchingButton =
+            Array.from(buttons)
+                .find(
+                    button =>
+                        button.getAttribute(
+                            "onclick"
+                        ) &&
+                        button.getAttribute(
+                            "onclick"
+                        ).includes(
+                            pageId
+                        )
+                );
+
 
         if (matchingButton) {
 
-            matchingButton.classList.add("active");
+            matchingButton.classList.add(
+                "active"
+            );
 
         }
 
@@ -338,16 +553,63 @@ function openCalculator() {
 
     resetCalculator();
 
-    showPage("calculatorPage");
+    showPage(
+        "calculatorPage"
+    );
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".nav-item"
+        );
+
+
+    buttons.forEach(
+        button =>
+            button.classList.remove(
+                "active"
+            )
+    );
+
+
+    if (buttons[1]) {
+
+        buttons[1].classList.add(
+            "active"
+        );
+
+    }
 
 }
 
 
 function resetCalculator() {
 
-    document.getElementById("billName").value = "";
+    const billName =
+        document.getElementById(
+            "billName"
+        );
 
-    document.getElementById("billAmount").value = "";
+
+    const billAmount =
+        document.getElementById(
+            "billAmount"
+        );
+
+
+    if (billName) {
+
+        billName.value = "";
+
+    }
+
+
+    if (billAmount) {
+
+        billAmount.value = "";
+
+    }
+
 
     selectedTip = 0;
 
@@ -357,19 +619,66 @@ function resetCalculator() {
 
     billPhotoData = null;
 
-    document.getElementById("billPreview").style.display =
-        "none";
+    const preview =
+        document.getElementById(
+            "billPreview"
+        );
 
-    document.getElementById("removePhotoBtn").style.display =
-        "none";
 
-    document.querySelectorAll(".tip-btn").forEach(btn => {
+    const removeButton =
+        document.getElementById(
+            "removePhotoBtn"
+        );
 
-        btn.classList.remove("active");
 
-    });
+    if (preview) {
 
-    document.querySelector(".tip-btn").classList.add("active");
+        preview.removeAttribute(
+            "src"
+        );
+
+        preview.style.display =
+            "none";
+
+    }
+
+
+    if (removeButton) {
+
+        removeButton.style.display =
+            "none";
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".tip-btn"
+        )
+        .forEach(
+            button =>
+                button.classList.remove(
+                    "active"
+                )
+        );
+
+
+    const firstTip =
+        document.querySelector(
+            ".tip-btn"
+        );
+
+
+    if (firstTip) {
+
+        firstTip.classList.add(
+            "active"
+        );
+
+    }
+
+
+    splitMode = "equal";
 
     resetPeople();
 
@@ -380,47 +689,56 @@ function resetCalculator() {
 }
 
 
+/* =========================
+   MAIN CALCULATION
+========================= */
+
 function calculateBill() {
 
     const amount =
-        parseFloat(
-            document.getElementById("billAmount").value
-        ) || 0;
+        getBillAmount();
 
 
-    /* GST */
+    /* 2% PLATFORM FEE */
 
-    const gst =
-        amount * (GST_RATE / 100);
+    const platformFee =
+        calculatePlatformFee(
+            amount
+        );
 
 
     /* TIP */
 
-    let tipPercent = selectedTip;
+    const tipPercent =
+        customTipValue !== null
+            ? customTipValue
+            : selectedTip;
 
-    let tipAmount =
-        amount * (tipPercent / 100);
 
-    if (customTipValue !== null) {
-
-        tipAmount =
-            amount * (customTipValue / 100);
-
-    }
+    const tipAmount =
+        amount *
+        tipPercent /
+        100;
 
 
     /* AUTOMATIC DISCOUNT */
 
     const discountPercent =
-        getDiscountPercent(amount);
+        getDiscountPercent(
+            amount
+        );
+
 
     const discountAmount =
-        amount * (discountPercent / 100);
+        amount *
+        discountPercent /
+        100;
 
 
     /* COUPON */
 
     let couponDiscount = 0;
+
 
     if (appliedCoupon) {
 
@@ -433,81 +751,113 @@ function calculateBill() {
     }
 
 
-    /* FINAL */
+    /* FINAL TOTAL */
 
     const finalTotal =
         Math.max(
             0,
+
             amount +
-            gst +
+            platformFee +
             tipAmount -
             discountAmount -
             couponDiscount
         );
 
 
-    /* UI */
+    /* UPDATE UI */
 
-    const symbol =
-        currencies[settings.currency];
-
-
-    document.getElementById("gstAmount").textContent =
-        formatMoney(gst);
+    setText(
+        "platformFeeAmount",
+        formatMoney(platformFee)
+    );
 
 
-    document.getElementById("tipAmount").textContent =
-        formatMoney(tipAmount);
+    setText(
+        "tipAmount",
+        formatMoney(tipAmount)
+    );
 
 
-    document.getElementById("discountPercent").textContent =
-        discountPercent + "%";
+    setText(
+        "discountPercent",
+        discountPercent + "%"
+    );
 
 
-    document.getElementById("discountAmount").textContent =
-        formatMoney(discountAmount);
+    setText(
+        "discountAmount",
+        formatMoney(discountAmount)
+    );
 
 
-    document.getElementById("discountMessage").textContent =
-        getDiscountMessage(amount);
+    setText(
+        "discountMessage",
+        getDiscountMessage(
+            amount
+        )
+    );
 
 
-    document.getElementById("summarySubtotal").textContent =
-        formatMoney(amount);
+    setText(
+        "summarySubtotal",
+        formatMoney(amount)
+    );
 
 
-    document.getElementById("summaryGST").textContent =
-        formatMoney(gst);
+    setText(
+        "summaryPlatformFee",
+        formatMoney(platformFee)
+    );
 
 
-    document.getElementById("summaryTip").textContent =
-        formatMoney(tipAmount);
+    setText(
+        "summaryTip",
+        formatMoney(tipAmount)
+    );
 
 
-    document.getElementById("summaryDiscount").textContent =
-        "-" + formatMoney(discountAmount);
+    setText(
+        "summaryDiscount",
+        "-" + formatMoney(discountAmount)
+    );
 
 
-    document.getElementById("summaryCoupon").textContent =
-        "-" + formatMoney(couponDiscount);
+    setText(
+        "summaryCoupon",
+        "-" + formatMoney(couponDiscount)
+    );
 
 
-    document.getElementById("finalTotal").textContent =
-        formatMoney(finalTotal);
+    setText(
+        "finalTotal",
+        formatMoney(finalTotal)
+    );
 
 
-    updatePeopleAmounts(finalTotal);
+    updatePeopleAmounts(
+        finalTotal
+    );
+
+
+    updatePaymentSummary(
+        finalTotal
+    );
 
 }
 
 
 /* =========================
-   GST
+   PLATFORM FEE
 ========================= */
 
-function calculateGST(amount) {
+function calculatePlatformFee(amount) {
 
-    return amount * (GST_RATE / 100);
+    return (
+        Number(amount || 0) *
+        PLATFORM_FEE_RATE /
+        100
+    );
 
 }
 
@@ -516,19 +866,38 @@ function calculateGST(amount) {
    TIP
 ========================= */
 
-function selectTip(percent, button) {
+function selectTip(
+    percent,
+    button
+) {
 
-    selectedTip = percent;
+    selectedTip =
+        Number(percent) || 0;
+
 
     customTipValue = null;
 
-    document.querySelectorAll(".tip-btn").forEach(btn => {
 
-        btn.classList.remove("active");
+    document
+        .querySelectorAll(
+            ".tip-btn"
+        )
+        .forEach(
+            btn =>
+                btn.classList.remove(
+                    "active"
+                )
+        );
 
-    });
 
-    button.classList.add("active");
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
 
     calculateBill();
 
@@ -543,54 +912,63 @@ function customTip() {
             "10"
         );
 
+
     if (value === null) return;
+
 
     const percent =
         parseFloat(value);
 
+
     if (
-        isNaN(percent) ||
+        !Number.isFinite(percent) ||
         percent < 0
     ) {
 
-        showToast("Enter a valid tip percentage");
+        showToast(
+            "Enter a valid tip percentage."
+        );
 
         return;
 
     }
 
+
     selectedTip = 0;
 
-    customTipValue = percent;
+    customTipValue =
+        percent;
 
 
-    document.querySelectorAll(".tip-btn").forEach(btn => {
-
-        btn.classList.remove("active");
-
-    });
+    document
+        .querySelectorAll(
+            ".tip-btn"
+        )
+        .forEach(
+            btn =>
+                btn.classList.remove(
+                    "active"
+                )
+        );
 
 
     calculateBill();
 
-    showToast(`Custom tip ${percent}% applied`);
+
+    showToast(
+        `Custom tip ${percent}% applied`
+    );
 
 }
 
 
 /* =========================
-   AUTOMATIC DISCOUNT
+   DISCOUNT
 ========================= */
 
-function getDiscountPercent(amount) {
-
-    /*
-        Below 1000 = 0%
-        1000 to 2499 = 5%
-        2500 to 3499 = 15%
-        3500 to 4999 = 20%
-        5000+ = 25%
-    */
+function getDiscountPercent(
+    amount
+) {
 
     if (amount >= 5000) {
 
@@ -598,11 +976,13 @@ function getDiscountPercent(amount) {
 
     }
 
+
     if (amount >= 3500) {
 
         return 20;
 
     }
+
 
     if (amount >= 2500) {
 
@@ -610,18 +990,22 @@ function getDiscountPercent(amount) {
 
     }
 
+
     if (amount >= 1000) {
 
         return 5;
 
     }
 
+
     return 0;
 
 }
 
 
-function getDiscountMessage(amount) {
+function getDiscountMessage(
+    amount
+) {
 
     if (amount <= 0) {
 
@@ -629,11 +1013,13 @@ function getDiscountMessage(amount) {
 
     }
 
+
     if (amount < 1000) {
 
-        return "Spend ₹1,000 or more to get 5% discount.";
+        return `Spend ${formatMoney(1000)} or more to get 5% discount.`;
 
     }
+
 
     if (amount < 2500) {
 
@@ -641,17 +1027,20 @@ function getDiscountMessage(amount) {
 
     }
 
+
     if (amount < 3500) {
 
         return "You received 15% automatic discount.";
 
     }
 
+
     if (amount < 5000) {
 
         return "You received 20% automatic discount.";
 
     }
+
 
     return "You received the maximum 25% automatic discount.";
 
@@ -662,20 +1051,20 @@ function getDiscountMessage(amount) {
    COUPONS
 ========================= */
 
-function isCouponExpired(coupon) {
+function isCouponExpired(
+    coupon
+) {
 
     const today =
         new Date();
 
-    const expiry =
-        new Date(coupon.expiry);
 
-    expiry.setHours(
-        23,
-        59,
-        59,
-        999
-    );
+    const expiry =
+        new Date(
+            coupon.expiry +
+            "T23:59:59"
+        );
+
 
     return today > expiry;
 
@@ -697,47 +1086,70 @@ function isBirthdayEligible() {
 
     }
 
-    const today =
-        new Date();
 
     const birthday =
         new Date(
-            settings.birthday + "T00:00:00"
+            settings.birthday +
+            "T00:00:00"
         );
 
+
+    const today =
+        new Date();
+
+
     return (
-        today.getMonth() === birthday.getMonth() &&
-        today.getDate() === birthday.getDate()
+        today.getMonth() ===
+            birthday.getMonth() &&
+
+        today.getDate() ===
+            birthday.getDate()
     );
 
 }
 
 
-function validateCoupon(coupon) {
+function validateCoupon(
+    coupon
+) {
 
     const amount =
-        parseFloat(
-            document.getElementById("billAmount").value
-        ) || 0;
+        getBillAmount();
 
 
-    if (isCouponExpired(coupon)) {
+    if (
+        isCouponExpired(
+            coupon
+        )
+    ) {
 
         return "This coupon has expired.";
 
     }
 
 
-    if (amount < coupon.minBill) {
+    if (
+        amount <
+        coupon.minBill
+    ) {
 
-        return `Minimum bill amount is ${formatMoney(coupon.minBill)}.`;
+        return (
+            `Minimum bill amount is ` +
+            `${formatMoney(coupon.minBill)}.`
+        );
 
     }
 
 
-    if (coupon.firstBillOnly && !isFirstBill()) {
+    if (
+        coupon.firstBillOnly &&
+        !isFirstBill()
+    ) {
 
-        return "This coupon is only available for your first bill.";
+        return (
+            "This coupon is only available " +
+            "for your first bill."
+        );
 
     }
 
@@ -747,7 +1159,10 @@ function validateCoupon(coupon) {
         !isBirthdayEligible()
     ) {
 
-        return "This coupon is only available on your birthday.";
+        return (
+            "This coupon is only available " +
+            "on your birthday."
+        );
 
     }
 
@@ -757,15 +1172,23 @@ function validateCoupon(coupon) {
 }
 
 
-function calculateCouponDiscount(coupon, amount) {
+function calculateCouponDiscount(
+    coupon,
+    amount
+) {
 
     let discount = 0;
 
 
-    if (coupon.type === "percentage") {
+    if (
+        coupon.type ===
+        "percentage"
+    ) {
 
         discount =
-            amount * (coupon.value / 100);
+            amount *
+            coupon.value /
+            100;
 
     } else {
 
@@ -777,7 +1200,8 @@ function calculateCouponDiscount(coupon, amount) {
 
     if (
         coupon.maxDiscount &&
-        discount > coupon.maxDiscount
+        discount >
+            coupon.maxDiscount
     ) {
 
         discount =
@@ -798,9 +1222,14 @@ function openCouponModal() {
 
     renderModalCoupons();
 
+
     document
-        .getElementById("couponModal")
-        .classList.add("active");
+        .getElementById(
+            "couponModal"
+        )
+        .classList.add(
+            "active"
+        );
 
 }
 
@@ -808,8 +1237,12 @@ function openCouponModal() {
 function closeCouponModal() {
 
     document
-        .getElementById("couponModal")
-        .classList.remove("active");
+        .getElementById(
+            "couponModal"
+        )
+        .classList.remove(
+            "active"
+        );
 
 }
 
@@ -817,14 +1250,20 @@ function closeCouponModal() {
 function renderCoupons() {
 
     const container =
-        document.getElementById("couponList");
+        document.getElementById(
+            "couponList"
+        );
 
-    container.innerHTML = "";
+
+    if (!container) return;
 
 
     const activeCoupons =
         coupons.filter(
-            coupon => !isCouponExpired(coupon)
+            coupon =>
+                !isCouponExpired(
+                    coupon
+                )
         );
 
 
@@ -843,12 +1282,15 @@ function renderCoupons() {
     }
 
 
-    activeCoupons.forEach(coupon => {
-
-        container.innerHTML +=
-            createCouponHTML(coupon);
-
-    });
+    container.innerHTML =
+        activeCoupons
+            .map(
+                coupon =>
+                    createCouponHTML(
+                        coupon
+                    )
+            )
+            .join("");
 
 }
 
@@ -856,74 +1298,99 @@ function renderCoupons() {
 function renderModalCoupons() {
 
     const container =
-        document.getElementById("modalCouponList");
+        document.getElementById(
+            "modalCouponList"
+        );
 
-    container.innerHTML = "";
+
+    if (!container) return;
 
 
-    coupons.forEach(coupon => {
-
-        if (isCouponExpired(coupon)) return;
-
-        container.innerHTML +=
-            createCouponHTML(
-                coupon,
-                true
-            );
-
-    });
+    container.innerHTML =
+        coupons
+            .filter(
+                coupon =>
+                    !isCouponExpired(
+                        coupon
+                    )
+            )
+            .map(
+                coupon =>
+                    createCouponHTML(
+                        coupon
+                    )
+            )
+            .join("");
 
 }
 
 
-function createCouponHTML(coupon, modal = false) {
+function createCouponHTML(
+    coupon
+) {
 
     let badges = "";
 
+
     if (coupon.featured) {
 
-        badges += `<span>FEATURED</span>`;
+        badges +=
+            `<span>FEATURED</span>`;
 
     }
+
 
     if (coupon.limitedTime) {
 
-        badges += `<span>LIMITED TIME</span>`;
+        badges +=
+            `<span>LIMITED TIME</span>`;
 
     }
+
 
     if (coupon.firstBillOnly) {
 
-        badges += `<span>FIRST BILL</span>`;
+        badges +=
+            `<span>FIRST BILL</span>`;
 
     }
 
+
     if (coupon.birthdayOnly) {
 
-        badges += `<span>BIRTHDAY</span>`;
+        badges +=
+            `<span>BIRTHDAY</span>`;
 
     }
 
 
     const discountText =
-        coupon.type === "percentage"
+        coupon.type ===
+            "percentage"
+
             ? `${coupon.value}% OFF`
+
             : `${formatMoney(coupon.value)} OFF`;
 
 
     return `
+
         <div class="coupon-card">
 
             <div class="coupon-top">
 
                 <div>
+
                     <div class="coupon-code">
-                        ${coupon.code}
+                        ${escapeHTML(coupon.code)}
                     </div>
 
                     <p>
-                        ${coupon.description}
+                        ${escapeHTML(
+                            coupon.description
+                        )}
                     </p>
+
                 </div>
 
                 <div class="coupon-discount">
@@ -938,11 +1405,15 @@ function createCouponHTML(coupon, modal = false) {
                 ${badges}
 
                 <span>
-                    Min ${formatMoney(coupon.minBill)}
+                    Min ${formatMoney(
+                        coupon.minBill
+                    )}
                 </span>
 
                 <span>
-                    Expires ${formatDate(coupon.expiry)}
+                    Expires ${formatDate(
+                        coupon.expiry
+                    )}
                 </span>
 
             </div>
@@ -950,12 +1421,15 @@ function createCouponHTML(coupon, modal = false) {
 
             <button
                 class="coupon-apply"
-                onclick="applyCoupon('${coupon.code}')"
+                onclick="applyCoupon('${escapeHTML(
+                    coupon.code
+                )}')"
             >
                 Apply Coupon
             </button>
 
         </div>
+
     `;
 
 }
@@ -965,13 +1439,16 @@ function applyCoupon(code) {
 
     const coupon =
         coupons.find(
-            item => item.code === code
+            item =>
+                item.code === code
         );
 
 
     if (!coupon) {
 
-        showToast("Coupon not found");
+        showToast(
+            "Coupon not found."
+        );
 
         return;
 
@@ -979,7 +1456,9 @@ function applyCoupon(code) {
 
 
     const error =
-        validateCoupon(coupon);
+        validateCoupon(
+            coupon
+        );
 
 
     if (error) {
@@ -991,19 +1470,16 @@ function applyCoupon(code) {
     }
 
 
-    /*
-        Only one coupon at a time.
-        Applying another coupon replaces
-        the current coupon.
-    */
+    appliedCoupon =
+        coupon;
 
-    appliedCoupon = coupon;
 
     updateAppliedCouponUI();
 
     calculateBill();
 
     closeCouponModal();
+
 
     showToast(
         `${coupon.code} applied successfully`
@@ -1020,7 +1496,9 @@ function removeCoupon() {
 
     calculateBill();
 
-    showToast("Coupon removed");
+    showToast(
+        "Coupon removed"
+    );
 
 }
 
@@ -1028,12 +1506,19 @@ function removeCoupon() {
 function updateAppliedCouponUI() {
 
     const container =
-        document.getElementById("appliedCoupon");
+        document.getElementById(
+            "appliedCoupon"
+        );
+
+
+    if (!container) return;
 
 
     if (!appliedCoupon) {
 
-        container.classList.add("hidden");
+        container.classList.add(
+            "hidden"
+        );
 
         container.innerHTML = "";
 
@@ -1043,9 +1528,7 @@ function updateAppliedCouponUI() {
 
 
     const amount =
-        parseFloat(
-            document.getElementById("billAmount").value
-        ) || 0;
+        getBillAmount();
 
 
     const discount =
@@ -1055,15 +1538,23 @@ function updateAppliedCouponUI() {
         );
 
 
-    container.classList.remove("hidden");
+    container.classList.remove(
+        "hidden"
+    );
+
 
     container.innerHTML = `
+
         <strong>
-            🎟️ ${appliedCoupon.code}
+            🎟️ ${escapeHTML(
+                appliedCoupon.code
+            )}
         </strong>
 
         <span>
-            Saving ${formatMoney(discount)}
+            Saving ${formatMoney(
+                discount
+            )}
         </span>
 
         <button
@@ -1078,6 +1569,7 @@ function updateAppliedCouponUI() {
         >
             Remove
         </button>
+
     `;
 
 }
@@ -1090,13 +1582,25 @@ function updateAppliedCouponUI() {
 function resetPeople() {
 
     people = [
+
         {
-            id: Date.now(),
-            name: "Person 1",
-            amount: 0,
-            paid: false
+            id:
+                Date.now() +
+                Math.random(),
+
+            name:
+                "Person 1",
+
+            amount:
+                0,
+
+            paid:
+                false
+
         }
+
     ];
+
 
     renderPeople();
 
@@ -1106,11 +1610,22 @@ function resetPeople() {
 function addPerson() {
 
     people.push({
-        id: Date.now() + Math.random(),
-        name: `Person ${people.length + 1}`,
-        amount: 0,
-        paid: false
+
+        id:
+            Date.now() +
+            Math.random(),
+
+        name:
+            `Person ${people.length + 1}`,
+
+        amount:
+            0,
+
+        paid:
+            false
+
     });
+
 
     renderPeople();
 
@@ -1121,9 +1636,13 @@ function addPerson() {
 
 function removePerson(id) {
 
-    if (people.length <= 1) {
+    if (
+        people.length <= 1
+    ) {
 
-        showToast("At least one person is required.");
+        showToast(
+            "At least one person is required."
+        );
 
         return;
 
@@ -1132,8 +1651,11 @@ function removePerson(id) {
 
     people =
         people.filter(
-            person => person.id !== id
+            person =>
+                String(person.id) !==
+                String(id)
         );
+
 
     renderPeople();
 
@@ -1144,49 +1666,117 @@ function removePerson(id) {
 
 function setSplitMode(mode) {
 
-    splitMode = mode;
+    splitMode =
+        mode === "custom"
+            ? "custom"
+            : "equal";
 
 
-    document
-        .getElementById("equalSplitBtn")
-        .classList.toggle(
-            "active",
-            mode === "equal"
+    const equalButton =
+        document.getElementById(
+            "equalSplitBtn"
         );
 
 
-    document
-        .getElementById("customSplitBtn")
-        .classList.toggle(
-            "active",
-            mode === "custom"
+    const customButton =
+        document.getElementById(
+            "customSplitBtn"
         );
 
 
-    renderPeople();
+    if (equalButton) {
+
+        equalButton.classList.toggle(
+            "active",
+            splitMode === "equal"
+        );
+
+    }
+
+
+    if (customButton) {
+
+        customButton.classList.toggle(
+            "active",
+            splitMode === "custom"
+        );
+
+    }
+
 
     calculateBill();
 
 }
 
 
-function updatePeopleAmounts(total) {
+function distributeEqual(
+    total
+) {
 
     if (!people.length) return;
 
 
-    if (splitMode === "equal") {
+    const roundedTotal =
+        Number(
+            total.toFixed(2)
+        );
 
-        const amount =
-            total / people.length;
+
+    const base =
+        Math.floor(
+            (
+                roundedTotal /
+                people.length
+            ) * 100
+        ) / 100;
 
 
-        people.forEach(person => {
+    let remaining =
+        roundedTotal;
 
-            person.amount =
-                Number(amount.toFixed(2));
 
-        });
+    people.forEach(
+        (person, index) => {
+
+            if (
+                index ===
+                people.length - 1
+            ) {
+
+                person.amount =
+                    Number(
+                        remaining.toFixed(2)
+                    );
+
+            } else {
+
+                person.amount =
+                    base;
+
+                remaining -= base;
+
+            }
+
+        }
+    );
+
+}
+
+
+function updatePeopleAmounts(
+    total
+) {
+
+    if (!people.length) return;
+
+
+    if (
+        splitMode === "equal"
+    ) {
+
+        distributeEqual(
+            total
+        );
 
     }
 
@@ -1196,95 +1786,75 @@ function updatePeopleAmounts(total) {
 }
 
 
-function renderPeople() {
+function updatePersonName(
+    id,
+    value
+) {
 
-    const container =
-        document.getElementById("peopleList");
-
-
-    container.innerHTML = "";
-
-
-    people.forEach(person => {
-
-        const amountValue =
-            person.amount || 0;
+    const person =
+        people.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
 
 
-        container.innerHTML += `
-            <div class="person-row">
-
-                <input
-                    type="text"
-                    value="${escapeHTML(person.name)}"
-                    placeholder="Person name"
-                    onchange="updatePersonName('${person.id}',this.value)"
-                >
-
-                <input
-                    type="number"
-                    value="${amountValue.toFixed(2)}"
-                    ${splitMode === "equal" ? "readonly" : ""}
-                    onchange="updatePersonAmount('${person.id}',this.value)"
-                >
-
-                <button
-                    class="person-status ${
-                        person.paid
-                            ? "paid"
-                            : "unpaid"
-                    }"
-                    onclick="togglePaid('${person.id}')"
-                >
-                    ${person.paid ? "Paid" : "Unpaid"}
-                </button>
-
-            </div>
-        `;
-
-    });
+    if (!person) return;
 
 
-    updatePaymentSummary();
+    person.name =
+        value.trim() ||
+        "Unnamed";
+
+
+    renderPeople();
 
 }
 
 
-function updatePersonName(id, value) {
+function updatePersonAmount(
+    id,
+    value
+) {
 
-    const person =
-        people.find(
-            item => String(item.id) === String(id)
-        );
+    if (
+        splitMode === "equal"
+    ) {
 
-
-    if (person) {
-
-        person.name =
-            value.trim() || "Unnamed";
-
-    }
-
-}
-
-
-function updatePersonAmount(id, value) {
-
-    const person =
-        people.find(
-            item => String(item.id) === String(id)
-        );
-
-
-    if (person) {
-
-        person.amount =
-            parseFloat(value) || 0;
+        return;
 
     }
 
 
-    updatePaymentSummary();
+    const person =
+        people.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+
+    if (!person) return;
+
+
+    const amount =
+        parseFloat(value);
+
+
+    person.amount =
+        Number.isFinite(amount) &&
+        amount >= 0
+            ? Number(
+                amount.toFixed(2)
+            )
+            : 0;
+
+
+    renderPeople();
+
+    updatePaymentSummary(
+        getFinalTotal()
+    );
 
 }
 
@@ -1293,7 +1863,9 @@ function togglePaid(id) {
 
     const person =
         people.find(
-            item => String(item.id) === String(id)
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1306,62 +1878,218 @@ function togglePaid(id) {
 
     renderPeople();
 
+    updatePaymentSummary(
+        getFinalTotal()
+    );
+
 }
 
 
-function updatePaymentSummary() {
+function renderPeople() {
+
+    const container =
+        document.getElementById(
+            "peopleList"
+        );
+
+
+    if (!container) return;
+
+
+    container.innerHTML = "";
+
+
+    people.forEach(
+        person => {
+
+            container.innerHTML += `
+
+                <div class="person-row">
+
+                    <input
+                        type="text"
+                        value="${escapeHTML(
+                            person.name
+                        )}"
+                        placeholder="Person name"
+                        onchange="updatePersonName(
+                            '${person.id}',
+                            this.value
+                        )"
+                    >
+
+                    <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value="${Number(
+                            person.amount || 0
+                        ).toFixed(2)}"
+                        ${
+                            splitMode === "equal"
+                                ? "disabled"
+                                : ""
+                        }
+                        onchange="updatePersonAmount(
+                            '${person.id}',
+                            this.value
+                        )"
+                    >
+
+                    <button
+                        class="person-remove"
+                        onclick="removePerson(
+                            '${person.id}'
+                        )"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <div
+                    style="
+                        display:flex;
+                        justify-content:flex-end;
+                        margin-top:-4px;
+                        margin-bottom:8px;
+                    "
+                >
+
+                    <button
+                        onclick="togglePaid(
+                            '${person.id}'
+                        )"
+                        style="
+                            border:none;
+                            background:none;
+                            color:${
+                                person.paid
+                                    ? "#16a34a"
+                                    : "#6b7280"
+                            };
+                            font-size:11px;
+                            font-weight:700;
+                        "
+                    >
+                        ${
+                            person.paid
+                                ? "✓ Paid"
+                                : "○ Mark as Paid"
+                        }
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+}
+
+
+/* =========================
+   PAYMENT SUMMARY
+========================= */
+
+function getFinalTotal() {
+
+    const amount =
+        getBillAmount();
+
+
+    const platformFee =
+        calculatePlatformFee(
+            amount
+        );
+
+
+    const tipPercent =
+        customTipValue !== null
+            ? customTipValue
+            : selectedTip;
+
+
+    const tip =
+        amount *
+        tipPercent /
+        100;
+
+
+    const discountPercent =
+        getDiscountPercent(
+            amount
+        );
+
+
+    const discount =
+        amount *
+        discountPercent /
+        100;
+
+
+    const couponDiscount =
+        appliedCoupon
+            ? calculateCouponDiscount(
+                appliedCoupon,
+                amount
+            )
+            : 0;
+
+
+    return Math.max(
+        0,
+
+        amount +
+        platformFee +
+        tip -
+        discount -
+        couponDiscount
+    );
+
+}
+
+
+function updatePaymentSummary(
+    total
+) {
 
     const paid =
-        people
-            .filter(person => person.paid)
-            .reduce(
-                (sum, person) =>
-                    sum + Number(person.amount || 0),
-                0
-            );
-
-
-    const total =
         people.reduce(
-            (sum, person) =>
-                sum + Number(person.amount || 0),
+            (
+                sum,
+                person
+            ) =>
+                person.paid
+                    ? sum +
+                        Number(
+                            person.amount || 0
+                        )
+                    : sum,
+
             0
         );
 
 
-    const finalTotal =
-        parseDisplayedMoney(
-            document.getElementById("finalTotal").textContent
+    const remaining =
+        Math.max(
+            0,
+            total -
+            paid
         );
 
 
-    let remaining;
+    setText(
+        "paidAmount",
+        formatMoney(paid)
+    );
 
 
-    if (splitMode === "custom") {
-
-        remaining =
-            Math.max(
-                0,
-                finalTotal - paid
-            );
-
-    } else {
-
-        remaining =
-            Math.max(
-                0,
-                total - paid
-            );
-
-    }
-
-
-    document.getElementById("paidAmount").textContent =
-        formatMoney(paid);
-
-    document.getElementById("remainingAmount").textContent =
-        formatMoney(remaining);
+    setText(
+        "remainingAmount",
+        formatMoney(remaining)
+    );
 
 }
 
@@ -1370,30 +2098,38 @@ function updatePaymentSummary() {
    BILL PHOTO
 ========================= */
 
-function openCamera() {
+function setupPhotoInput() {
 
-    document
-        .getElementById("billPhoto")
-        .click();
+    const input =
+        document.getElementById(
+            "billPhoto"
+        );
 
-}
+
+    if (!input) return;
 
 
-document
-    .getElementById("billPhoto")
-    .addEventListener(
+    input.addEventListener(
         "change",
-        function(event) {
+        function (event) {
 
             const file =
+                event.target.files &&
                 event.target.files[0];
+
 
             if (!file) return;
 
 
-            if (!file.type.startsWith("image/")) {
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
 
-                showToast("Please select an image.");
+                showToast(
+                    "Please select an image."
+                );
 
                 return;
 
@@ -1405,7 +2141,7 @@ document
 
 
             reader.onload =
-                function(e) {
+                function (e) {
 
                     billPhotoData =
                         e.target.result;
@@ -1417,18 +2153,21 @@ document
                         );
 
 
+                    const removeButton =
+                        document.getElementById(
+                            "removePhotoBtn"
+                        );
+
+
                     preview.src =
                         billPhotoData;
+
 
                     preview.style.display =
                         "block";
 
 
-                    document
-                        .getElementById(
-                            "removePhotoBtn"
-                        )
-                        .style.display =
+                    removeButton.style.display =
                         "block";
 
 
@@ -1439,27 +2178,91 @@ document
                 };
 
 
-            reader.readAsDataURL(file);
+            reader.onerror =
+                function () {
+
+                    showToast(
+                        "Unable to read image."
+                    );
+
+                };
+
+
+            reader.readAsDataURL(
+                file
+            );
 
         }
     );
+
+}
+
+
+function openCamera() {
+
+    const input =
+        document.getElementById(
+            "billPhoto"
+        );
+
+
+    if (input) {
+
+        input.click();
+
+    }
+
+}
 
 
 function removeBillPhoto() {
 
     billPhotoData = null;
 
-    document
-        .getElementById("billPhoto")
-        .value = "";
 
-    document
-        .getElementById("billPreview")
-        .style.display = "none";
+    const input =
+        document.getElementById(
+            "billPhoto"
+        );
 
-    document
-        .getElementById("removePhotoBtn")
-        .style.display = "none";
+
+    const preview =
+        document.getElementById(
+            "billPreview"
+        );
+
+
+    const removeButton =
+        document.getElementById(
+            "removePhotoBtn"
+        );
+
+
+    if (input) {
+
+        input.value = "";
+
+    }
+
+
+    if (preview) {
+
+        preview.removeAttribute(
+            "src"
+        );
+
+        preview.style.display =
+            "none";
+
+    }
+
+
+    if (removeButton) {
+
+        removeButton.style.display =
+            "none";
+
+    }
 
 }
 
@@ -1471,52 +2274,74 @@ function removeBillPhoto() {
 function saveBill() {
 
     const name =
-        document
-            .getElementById("billName")
-            .value.trim();
+        (
+            document.getElementById(
+                "billName"
+            )?.value || ""
+        ).trim();
 
 
     const amount =
-        parseFloat(
-            document
-                .getElementById("billAmount")
-                .value
-        ) || 0;
+        getBillAmount();
 
 
     if (!name) {
 
-        showToast("Please enter a bill name.");
+        showToast(
+            "Please enter a bill name."
+        );
 
         return;
 
     }
 
 
-    if (amount <= 0) {
+    if (
+        amount <= 0
+    ) {
 
-        showToast("Please enter a valid bill amount.");
+        showToast(
+            "Please enter a valid bill amount."
+        );
 
         return;
 
     }
 
 
-    const gst =
-        calculateGST(amount);
+    if (!people.length) {
+
+        showToast(
+            "Add at least one person."
+        );
+
+        return;
+
+    }
 
 
-    let tip =
+    const platformFee =
+        calculatePlatformFee(
+            amount
+        );
+
+
+    const tipPercent =
+        customTipValue !== null
+            ? customTipValue
+            : selectedTip;
+
+
+    const tip =
         amount *
-        (
-            customTipValue !== null
-                ? customTipValue
-                : selectedTip
-        ) / 100;
+        tipPercent /
+        100;
 
 
     const discountPercent =
-        getDiscountPercent(amount);
+        getDiscountPercent(
+            amount
+        );
 
 
     const discount =
@@ -1537,30 +2362,46 @@ function saveBill() {
     const total =
         Math.max(
             0,
+
             amount +
-            gst +
+            platformFee +
             tip -
             discount -
             couponDiscount
         );
 
 
-    /* Validate custom split */
+    /* SPLIT */
 
-    if (splitMode === "custom") {
+    if (
+        splitMode === "equal"
+    ) {
+
+        distributeEqual(
+            total
+        );
+
+    } else {
 
         const peopleTotal =
             people.reduce(
-                (sum, person) =>
+                (
+                    sum,
+                    person
+                ) =>
                     sum +
-                    Number(person.amount || 0),
+                    Number(
+                        person.amount || 0
+                    ),
+
                 0
             );
 
 
         if (
             Math.abs(
-                peopleTotal - total
+                peopleTotal -
+                total
             ) > 0.01
         ) {
 
@@ -1572,19 +2413,6 @@ function saveBill() {
 
         }
 
-    } else {
-
-        const each =
-            total / people.length;
-
-
-        people.forEach(person => {
-
-            person.amount =
-                Number(each.toFixed(2));
-
-        });
-
     }
 
 
@@ -1593,32 +2421,42 @@ function saveBill() {
         id:
             Date.now().toString(),
 
-        name,
+        name:
+            name,
 
         date:
             new Date().toISOString(),
 
         subtotal:
-            Number(amount.toFixed(2)),
+            Number(
+                amount.toFixed(2)
+            ),
 
-        gstRate:
-            GST_RATE,
+        platformFeeRate:
+            PLATFORM_FEE_RATE,
 
-        gst:
-            Number(gst.toFixed(2)),
+        platformFee:
+            Number(
+                platformFee.toFixed(2)
+            ),
 
         tip:
-            Number(tip.toFixed(2)),
+            Number(
+                tip.toFixed(2)
+            ),
 
         tipPercent:
-            customTipValue !== null
-                ? customTipValue
-                : selectedTip,
+            Number(
+                tipPercent.toFixed(2)
+            ),
 
-        discountPercent,
+        discountPercent:
+            discountPercent,
 
         discount:
-            Number(discount.toFixed(2)),
+            Number(
+                discount.toFixed(2)
+            ),
 
         coupon:
             appliedCoupon
@@ -1626,17 +2464,23 @@ function saveBill() {
                 : null,
 
         couponDiscount:
-            Number(couponDiscount.toFixed(2)),
+            Number(
+                couponDiscount.toFixed(2)
+            ),
 
         total:
-            Number(total.toFixed(2)),
+            Number(
+                total.toFixed(2)
+            ),
 
         currency:
             settings.currency,
 
         people:
             JSON.parse(
-                JSON.stringify(people)
+                JSON.stringify(
+                    people
+                )
             ),
 
         photo:
@@ -1645,18 +2489,20 @@ function saveBill() {
     };
 
 
-    bills.unshift(bill);
+    bills.unshift(
+        bill
+    );
+
 
     saveBills();
 
-
-    /* Coupon history */
 
     if (appliedCoupon) {
 
         couponHistory.unshift({
 
-            id: Date.now(),
+            id:
+                Date.now(),
 
             code:
                 appliedCoupon.code,
@@ -1672,23 +2518,32 @@ function saveBill() {
 
         });
 
+
         saveCouponHistory();
 
     }
 
 
-    showToast("Bill saved successfully!");
+    showToast(
+        "Bill saved successfully!"
+    );
+
 
     updateDashboard();
 
     renderHistory();
 
 
-    setTimeout(() => {
+    setTimeout(
+        function () {
 
-        showPage("homePage");
+            showPage(
+                "homePage"
+            );
 
-    }, 700);
+        },
+        700
+    );
 
 }
 
@@ -1700,20 +2555,30 @@ function saveBill() {
 function renderHistory() {
 
     const container =
-        document.getElementById("historyList");
+        document.getElementById(
+            "historyList"
+        );
 
 
-    container.innerHTML = "";
+    if (!container) return;
 
 
     if (!bills.length) {
 
         container.innerHTML = `
+
             <div class="empty-state">
+
                 <div>🧾</div>
+
                 <h3>No bills yet</h3>
-                <p>Your saved bills will appear here.</p>
+
+                <p>
+                    Your saved bills will appear here.
+                </p>
+
             </div>
+
         `;
 
         return;
@@ -1721,15 +2586,15 @@ function renderHistory() {
     }
 
 
-    bills.forEach(bill => {
-
-        container.innerHTML +=
-            createBillCard(bill);
-
-    });
-
-
-    renderRecentBills();
+    container.innerHTML =
+        bills
+            .map(
+                bill =>
+                    createBillCard(
+                        bill
+                    )
+            )
+            .join("");
 
 }
 
@@ -1737,21 +2602,37 @@ function renderHistory() {
 function renderRecentBills() {
 
     const container =
-        document.getElementById("recentBills");
+        document.getElementById(
+            "recentBills"
+        );
+
+
+    if (!container) return;
 
 
     const recent =
-        bills.slice(0, 3);
+        bills.slice(
+            0,
+            3
+        );
 
 
     if (!recent.length) {
 
         container.innerHTML = `
+
             <div class="empty-state">
+
                 <div>🧾</div>
+
                 <h3>No bills yet</h3>
-                <p>Create your first bill to see it here.</p>
+
+                <p>
+                    Create your first bill to see it here.
+                </p>
+
             </div>
+
         `;
 
         return;
@@ -1761,23 +2642,43 @@ function renderRecentBills() {
 
     container.innerHTML =
         recent
-            .map(bill => createBillCard(bill))
+            .map(
+                bill =>
+                    createBillCard(
+                        bill
+                    )
+            )
             .join("");
 
 }
 
 
-function createBillCard(bill) {
+function createBillCard(
+    bill
+) {
 
     const symbol =
-        currencies[bill.currency] ||
-        currencies[settings.currency];
+        currencies[
+            bill.currency
+        ] ||
+        "₹";
+
+
+    const peopleCount =
+        Array.isArray(
+            bill.people
+        )
+            ? bill.people.length
+            : 0;
 
 
     return `
+
         <div
             class="bill-card"
-            onclick="openBillDetails('${bill.id}')"
+            onclick="openBillDetails(
+                '${escapeHTML(bill.id)}'
+            )"
         >
 
             <div class="bill-card-top">
@@ -1785,17 +2686,23 @@ function createBillCard(bill) {
                 <div>
 
                     <h3>
-                        ${escapeHTML(bill.name)}
+                        ${escapeHTML(
+                            bill.name
+                        )}
                     </h3>
 
                     <div class="date">
-                        ${formatDateTime(bill.date)}
+                        ${formatDateTime(
+                            bill.date
+                        )}
                     </div>
 
                 </div>
 
                 <div class="bill-total">
-                    ${symbol}${bill.total.toFixed(2)}
+                    ${symbol}${Number(
+                        bill.total || 0
+                    ).toFixed(2)}
                 </div>
 
             </div>
@@ -1804,28 +2711,42 @@ function createBillCard(bill) {
             <div class="bill-card-bottom">
 
                 <span>
-                    👥 ${bill.people.length} people
+                    👥 ${peopleCount} people
                 </span>
 
                 <span>
-                    ${bill.coupon
-                        ? "🎟️ " + bill.coupon
-                        : "No coupon"}
+                    ${
+                        bill.coupon
+                            ? "🎟️ " +
+                                escapeHTML(
+                                    bill.coupon
+                                )
+                            : "No coupon"
+                    }
                 </span>
 
             </div>
 
         </div>
+
     `;
 
 }
 
 
-function openBillDetails(id) {
+/* =========================
+   BILL DETAILS
+========================= */
+
+function openBillDetails(
+    id
+) {
 
     const bill =
         bills.find(
-            item => item.id === id
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1833,41 +2754,89 @@ function openBillDetails(id) {
 
 
     const symbol =
-        currencies[bill.currency] ||
+        currencies[
+            bill.currency
+        ] ||
         "₹";
 
 
+    const platformFee =
+        Number(
+            bill.platformFee ??
+            bill.gst ??
+            0
+        );
+
+
+    const platformFeeRate =
+        Number(
+            bill.platformFeeRate ??
+            bill.gstRate ??
+            PLATFORM_FEE_RATE
+        );
+
+
+    const billPeople =
+        Array.isArray(
+            bill.people
+        )
+            ? bill.people
+            : [];
+
+
     const peopleHTML =
-        bill.people
-            .map(person => `
-                <div class="detail-row">
+        billPeople
+            .map(
+                person => `
 
-                    <span>
-                        ${escapeHTML(person.name)}
-                    </span>
+                    <div class="detail-row">
 
-                    <strong>
-                        ${symbol}${person.amount.toFixed(2)}
-                        ${person.paid ? " ✓" : ""}
-                    </strong>
+                        <span>
+                            ${escapeHTML(
+                                person.name
+                            )}
+                        </span>
 
-                </div>
-            `)
+                        <strong>
+                            ${symbol}${Number(
+                                person.amount || 0
+                            ).toFixed(2)}
+
+                            ${
+                                person.paid
+                                    ? " ✓"
+                                    : ""
+                            }
+
+                        </strong>
+
+                    </div>
+
+                `
+            )
             .join("");
 
 
-    document.getElementById(
-        "billDetails"
-    ).innerHTML = `
+    const details =
+        document.getElementById(
+            "billDetails"
+        );
+
+
+    details.innerHTML = `
 
         <div class="detail-section">
 
             <h3>
-                ${escapeHTML(bill.name)}
+                ${escapeHTML(
+                    bill.name
+                )}
             </h3>
 
             <p class="muted">
-                ${formatDateTime(bill.date)}
+                ${formatDateTime(
+                    bill.date
+                )}
             </p>
 
         </div>
@@ -1876,35 +2845,92 @@ function openBillDetails(id) {
         <div class="detail-section">
 
             <div class="detail-row">
-                <span>Bill Amount</span>
-                <strong>${symbol}${bill.subtotal.toFixed(2)}</strong>
-            </div>
 
-            <div class="detail-row">
-                <span>GST (${bill.gstRate}%)</span>
-                <strong>${symbol}${bill.gst.toFixed(2)}</strong>
-            </div>
+                <span>
+                    Bill Amount
+                </span>
 
-            <div class="detail-row">
-                <span>Tip</span>
-                <strong>${symbol}${bill.tip.toFixed(2)}</strong>
-            </div>
-
-            <div class="detail-row">
-                <span>Discount (${bill.discountPercent}%)</span>
-                <strong>-${symbol}${bill.discount.toFixed(2)}</strong>
-            </div>
-
-            <div class="detail-row">
-                <span>Coupon</span>
                 <strong>
-                    -${symbol}${bill.couponDiscount.toFixed(2)}
+                    ${symbol}${Number(
+                        bill.subtotal || 0
+                    ).toFixed(2)}
                 </strong>
+
             </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Platform Fee (${platformFeeRate}%)
+                </span>
+
+                <strong>
+                    ${symbol}${platformFee.toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Tip
+                </span>
+
+                <strong>
+                    ${symbol}${Number(
+                        bill.tip || 0
+                    ).toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Discount (${Number(
+                        bill.discountPercent || 0
+                    )}%)
+                </span>
+
+                <strong>
+                    -${symbol}${Number(
+                        bill.discount || 0
+                    ).toFixed(2)}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span>
+                    Coupon
+                </span>
+
+                <strong>
+                    -${symbol}${Number(
+                        bill.couponDiscount || 0
+                    ).toFixed(2)}
+                </strong>
+
+            </div>
+
 
             <div class="detail-row detail-total">
-                <span>Total</span>
-                <strong>${symbol}${bill.total.toFixed(2)}</strong>
+
+                <span>
+                    Total
+                </span>
+
+                <strong>
+                    ${symbol}${Number(
+                        bill.total || 0
+                    ).toFixed(2)}
+                </strong>
+
             </div>
 
         </div>
@@ -1921,23 +2947,37 @@ function openBillDetails(id) {
 
         <button
             class="primary-btn big-btn"
-            onclick="shareBill('${bill.id}')"
+            onclick="shareBill(
+                '${escapeHTML(bill.id)}'
+            )"
         >
             📤 Share Bill
         </button>
 
+
         <button
             class="primary-btn big-btn"
-            style="margin-top:8px;background:#25D366;"
-            onclick="shareWhatsApp('${bill.id}')"
+            style="
+                margin-top:8px;
+                background:#25D366;
+            "
+            onclick="shareWhatsApp(
+                '${escapeHTML(bill.id)}'
+            )"
         >
             🟢 Share on WhatsApp
         </button>
 
+
         <button
             class="small-btn danger"
-            style="width:100%;margin-top:8px;"
-            onclick="deleteBill('${bill.id}')"
+            style="
+                width:100%;
+                margin-top:8px;
+            "
+            onclick="deleteBill(
+                '${escapeHTML(bill.id)}'
+            )"
         >
             🗑️ Delete Bill
         </button>
@@ -1946,8 +2986,12 @@ function openBillDetails(id) {
 
 
     document
-        .getElementById("billDetailsModal")
-        .classList.add("active");
+        .getElementById(
+            "billDetailsModal"
+        )
+        .classList.add(
+            "active"
+        );
 
 }
 
@@ -1955,8 +2999,12 @@ function openBillDetails(id) {
 function closeBillDetails() {
 
     document
-        .getElementById("billDetailsModal")
-        .classList.remove("active");
+        .getElementById(
+            "billDetailsModal"
+        )
+        .classList.remove(
+            "active"
+        );
 
 }
 
@@ -1976,7 +3024,9 @@ function deleteBill(id) {
 
     bills =
         bills.filter(
-            bill => bill.id !== id
+            bill =>
+                String(bill.id) !==
+                String(id)
         );
 
 
@@ -1988,7 +3038,9 @@ function deleteBill(id) {
 
     updateDashboard();
 
-    showToast("Bill deleted");
+    showToast(
+        "Bill deleted"
+    );
 
 }
 
@@ -2001,7 +3053,9 @@ function clearHistory() {
 
     if (!bills.length) {
 
-        showToast("No bills to clear");
+        showToast(
+            "No bills to clear"
+        );
 
         return;
 
@@ -2021,13 +3075,16 @@ function clearHistory() {
 
     bills = [];
 
+
     saveBills();
 
     renderHistory();
 
     updateDashboard();
 
-    showToast("Bill history cleared");
+    showToast(
+        "Bill history cleared"
+    );
 
 }
 
@@ -2062,6 +3119,7 @@ function clearAllData() {
 
     couponHistory = [];
 
+
     settings = {
 
         currency: "INR",
@@ -2073,30 +3131,62 @@ function clearAllData() {
     };
 
 
-    document.body.classList.remove("dark");
-
-    document.getElementById(
-        "darkModeToggle"
-    ).checked = false;
+    document.body.classList.remove(
+        "dark"
+    );
 
 
-    document.getElementById(
-        "currencySelect"
-    ).value = "INR";
+    const darkToggle =
+        document.getElementById(
+            "darkModeToggle"
+        );
 
 
-    document.getElementById(
-        "birthdayInput"
-    ).value = "";
+    const currencySelect =
+        document.getElementById(
+            "currencySelect"
+        );
 
+
+    const birthdayInput =
+        document.getElementById(
+            "birthdayInput"
+        );
+
+
+    if (darkToggle) {
+
+        darkToggle.checked =
+            false;
+
+    }
+
+
+    if (currencySelect) {
+
+        currencySelect.value =
+            "INR";
+
+    }
+
+
+    if (birthdayInput) {
+
+        birthdayInput.value =
+            "";
+
+    }
+
+
+    updateCurrencyUI();
 
     renderHistory();
 
     updateDashboard();
 
-    updateCurrencyUI();
-
-    showToast("All data cleared");
+    showToast(
+        "All data cleared"
+    );
 
 }
 
@@ -2107,26 +3197,39 @@ function clearAllData() {
 
 function updateDashboard() {
 
-    document.getElementById(
-        "totalBills"
-    ).textContent =
-        bills.length;
+    setText(
+        "totalBills",
+        bills.length
+    );
 
 
     const totalSaved =
         bills.reduce(
-            (sum, bill) =>
+            (
+                sum,
+                bill
+            ) =>
+
                 sum +
-                bill.discount +
-                bill.couponDiscount,
+
+                Number(
+                    bill.discount || 0
+                ) +
+
+                Number(
+                    bill.couponDiscount || 0
+                ),
+
             0
         );
 
 
-    document.getElementById(
-        "totalSaved"
-    ).textContent =
-        formatMoney(totalSaved);
+    setText(
+        "totalSaved",
+        formatMoney(
+            totalSaved
+        )
+    );
 
 
     renderRecentBills();
@@ -2138,60 +3241,131 @@ function updateDashboard() {
    SHARING
 ========================= */
 
-function generateShareText(bill) {
+function generateShareText(
+    bill
+) {
 
     const symbol =
-        currencies[bill.currency] ||
+        currencies[
+            bill.currency
+        ] ||
         "₹";
 
 
-    let text = "";
+    const platformFee =
+        Number(
+            bill.platformFee ??
+            bill.gst ??
+            0
+        );
 
-    text += "🧾 BillSplit\n\n";
 
-    text += `${bill.name}\n`;
+    const platformFeeRate =
+        Number(
+            bill.platformFeeRate ??
+            bill.gstRate ??
+            2
+        );
 
-    text += `${formatDateTime(bill.date)}\n\n`;
 
-    text += `Bill Amount: ${symbol}${bill.subtotal.toFixed(2)}\n`;
+    let text =
+        "🧾 BillSplit\n\n";
 
-    text += `GST: ${symbol}${bill.gst.toFixed(2)}\n`;
 
-    text += `Tip: ${symbol}${bill.tip.toFixed(2)}\n`;
+    text +=
+        `${bill.name}\n`;
 
-    text += `Discount: -${symbol}${bill.discount.toFixed(2)}\n`;
+
+    text +=
+        `${formatDateTime(
+            bill.date
+        )}\n\n`;
+
+
+    text +=
+        `Bill Amount: ${symbol}${Number(
+            bill.subtotal || 0
+        ).toFixed(2)}\n`;
+
+
+    text +=
+        `Platform Fee (${platformFeeRate}%): ${symbol}${platformFee.toFixed(2)}\n`;
+
+
+    text +=
+        `Tip: ${symbol}${Number(
+            bill.tip || 0
+        ).toFixed(2)}\n`;
+
+
+    text +=
+        `Discount: -${symbol}${Number(
+            bill.discount || 0
+        ).toFixed(2)}\n`;
+
 
     if (bill.coupon) {
 
-        text += `Coupon (${bill.coupon}): -${symbol}${bill.couponDiscount.toFixed(2)}\n`;
+        text +=
+            `Coupon (${bill.coupon}): -${symbol}${Number(
+                bill.couponDiscount || 0
+            ).toFixed(2)}\n`;
 
     }
 
-    text += `\nTotal: ${symbol}${bill.total.toFixed(2)}\n\n`;
 
-    text += "People:\n";
-
-
-    bill.people.forEach(person => {
-
-        text +=
-            `${person.name}: ${symbol}${person.amount.toFixed(2)} ${person.paid ? "✓ Paid" : "Unpaid"}\n`;
-
-    });
+    text +=
+        `\nTotal: ${symbol}${Number(
+            bill.total || 0
+        ).toFixed(2)}\n\n`;
 
 
-    text += "\nSplit with BillSplit";
+    text +=
+        "People:\n";
+
+
+    if (
+        Array.isArray(
+            bill.people
+        )
+    ) {
+
+        bill.people.forEach(
+            person => {
+
+                text +=
+                    `${person.name}: ${symbol}${Number(
+                        person.amount || 0
+                    ).toFixed(2)} ${
+                        person.paid
+                            ? "✓ Paid"
+                            : "Unpaid"
+                    }\n`;
+
+            }
+        );
+
+    }
+
+
+    text +=
+        "\nSplit with BillSplit";
+
 
     return text;
 
 }
 
 
-async function shareBill(id) {
+async function shareBill(
+    id
+) {
 
     const bill =
         bills.find(
-            item => item.id === id
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -2199,7 +3373,9 @@ async function shareBill(id) {
 
 
     const text =
-        generateShareText(bill);
+        generateShareText(
+            bill
+        );
 
 
     if (
@@ -2210,36 +3386,53 @@ async function shareBill(id) {
 
             await navigator.share({
 
-                title: "BillSplit Bill",
+                title:
+                    "BillSplit Bill",
 
-                text
+                text:
+                    text
 
             });
 
+            return;
+
         } catch (error) {
 
-            /* User cancelled share */
+            if (
+                error.name ===
+                "AbortError"
+            ) {
+
+                return;
+
+            }
 
         }
 
-    } else {
-
-        copyToClipboard(text);
-
-        showToast(
-            "Bill copied to clipboard"
-        );
-
     }
+
+
+    await copyToClipboard(
+        text
+    );
+
+
+    showToast(
+        "Bill copied to clipboard"
+    );
 
 }
 
 
-function shareWhatsApp(id) {
+function shareWhatsApp(
+    id
+) {
 
     const bill =
         bills.find(
-            item => item.id === id
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -2247,18 +3440,31 @@ function shareWhatsApp(id) {
 
 
     const text =
-        generateShareText(bill);
+        generateShareText(
+            bill
+        );
 
 
     const url =
         "https://wa.me/?text=" +
-        encodeURIComponent(text);
+        encodeURIComponent(
+            text
+        );
 
 
-    window.open(
-        url,
-        "_blank"
-    );
+    const popup =
+        window.open(
+            url,
+            "_blank"
+        );
+
+
+    if (!popup) {
+
+        window.location.href =
+            url;
+
+    }
 
 }
 
@@ -2267,41 +3473,100 @@ function shareWhatsApp(id) {
    HELPERS
 ========================= */
 
-function formatMoney(amount) {
+function getBillAmount() {
 
-    const symbol =
-        currencies[settings.currency] ||
-        "₹";
+    const input =
+        document.getElementById(
+            "billAmount"
+        );
 
+
+    const amount =
+        input
+            ? parseFloat(
+                input.value
+            )
+            : 0;
+
+
+    return Number.isFinite(
+        amount
+    )
+        ? Math.max(
+            0,
+            amount
+        )
+        : 0;
+
+}
+
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (element) {
+
+        element.textContent =
+            value;
+
+    }
+
+}
+
+
+function getCurrencySymbol() {
 
     return (
-        symbol +
-        Number(amount || 0)
-            .toFixed(2)
+        currencies[
+            settings.currency
+        ] ||
+        "₹"
     );
 
 }
 
 
-function parseDisplayedMoney(text) {
-
-    if (!text) return 0;
-
+function formatMoney(
+    amount
+) {
 
     return (
-        parseFloat(
-            String(text)
-                .replace(/[^\d.-]/g, "")
-        ) || 0
+        getCurrencySymbol() +
+        Number(
+            amount || 0
+        ).toFixed(2)
     );
 
 }
 
 
-function formatDate(dateString) {
+function formatDate(
+    dateString
+) {
 
     const date =
-        new Date(dateString);
+        new Date(
+            dateString
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "-";
+
+    }
 
 
     return date.toLocaleDateString(
@@ -2316,10 +3581,25 @@ function formatDate(dateString) {
 }
 
 
-function formatDateTime(dateString) {
+function formatDateTime(
+    dateString
+) {
 
     const date =
-        new Date(dateString);
+        new Date(
+            dateString
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "-";
+
+    }
 
 
     return date.toLocaleString(
@@ -2336,61 +3616,146 @@ function formatDateTime(dateString) {
 }
 
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
-async function copyToClipboard(text) {
+async function copyToClipboard(
+    text
+) {
 
     try {
 
-        await navigator.clipboard.writeText(text);
+        if (
+            navigator.clipboard &&
+            window.isSecureContext
+        ) {
 
-    } catch (error) {
+            await navigator.clipboard.writeText(
+                text
+            );
+
+            return true;
+
+        }
+
+    } catch (error) {}
+
+
+    try {
 
         const textarea =
-            document.createElement("textarea");
+            document.createElement(
+                "textarea"
+            );
 
-        textarea.value = text;
 
-        document.body.appendChild(textarea);
+        textarea.value =
+            text;
+
+
+        textarea.style.position =
+            "fixed";
+
+
+        textarea.style.opacity =
+            "0";
+
+
+        document.body.appendChild(
+            textarea
+        );
+
+
+        textarea.focus();
 
         textarea.select();
 
-        document.execCommand("copy");
+
+        const successful =
+            document.execCommand(
+                "copy"
+            );
+
 
         textarea.remove();
+
+
+        return successful;
+
+    } catch (error) {
+
+        return false;
 
     }
 
 }
 
 
-function showToast(message) {
+function showToast(
+    message
+) {
 
     const toast =
-        document.getElementById("toast");
+        document.getElementById(
+            "toast"
+        );
+
+
+    if (!toast) return;
 
 
     toast.textContent =
         message;
 
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
 
-    setTimeout(() => {
+    clearTimeout(
+        window.billSplitToastTimer
+    );
 
-        toast.classList.remove("show");
 
-    }, 2500);
+    window.billSplitToastTimer =
+        setTimeout(
+            function () {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
 
 }
