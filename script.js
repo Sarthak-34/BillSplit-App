@@ -1,63 +1,7 @@
 /* =========================================================
    BillSplit
    Vanilla JavaScript
-   Platform Fee = 2%
 ========================================================= */
-
-
-/* =========================
-   STORAGE HELPERS
-========================= */
-
-function readStorageArray(key) {
-
-    try {
-
-        const data =
-            JSON.parse(
-                localStorage.getItem(key) || "[]"
-            );
-
-        return Array.isArray(data) ? data : [];
-
-    } catch (error) {
-
-        return [];
-
-    }
-
-}
-
-
-function readStorageObject(key, fallback) {
-
-    try {
-
-        const data =
-            JSON.parse(
-                localStorage.getItem(key) || "null"
-            );
-
-        if (
-            data &&
-            typeof data === "object" &&
-            !Array.isArray(data)
-        ) {
-
-            return {
-                ...fallback,
-                ...data
-            };
-
-        }
-
-    } catch (error) {}
-
-    return {
-        ...fallback
-    };
-
-}
 
 
 /* =========================
@@ -66,9 +10,7 @@ function readStorageObject(key, fallback) {
 
 const PLATFORM_FEE_RATE = 2;
 
-
 const currencies = {
-
     INR: "₹",
     USD: "$",
     EUR: "€",
@@ -77,47 +19,40 @@ const currencies = {
     CAD: "$",
     AUD: "$",
     SGD: "$"
-
 };
 
 
 let bills =
-    readStorageArray(
-        "billsplit_bills"
-    );
+    JSON.parse(
+        localStorage.getItem("billsplit_bills")
+    ) || [];
 
 
 let settings =
-    readStorageObject(
-        "billsplit_settings",
-        {
-            currency: "INR",
-            darkMode: false,
-            birthday: ""
-        }
-    );
+    JSON.parse(
+        localStorage.getItem("billsplit_settings")
+    ) || {
+        currency: "INR",
+        darkMode: false,
+        birthday: ""
+    };
 
 
 let couponHistory =
-    readStorageArray(
-        "billsplit_coupon_history"
-    );
+    JSON.parse(
+        localStorage.getItem("billsplit_coupon_history")
+    ) || [];
 
 
 let people = [];
 
-
 let splitMode = "equal";
-
 
 let selectedTip = 0;
 
-
 let customTipValue = null;
 
-
 let appliedCoupon = null;
-
 
 let billPhotoData = null;
 
@@ -231,10 +166,6 @@ document.addEventListener(
 
         resetPeople();
 
-        setupPhotoInput();
-
-        calculateBill();
-
     }
 );
 
@@ -245,20 +176,10 @@ document.addEventListener(
 
 function saveBills() {
 
-    try {
-
-        localStorage.setItem(
-            "billsplit_bills",
-            JSON.stringify(bills)
-        );
-
-    } catch (error) {
-
-        showToast(
-            "Unable to save bills. Storage may be full."
-        );
-
-    }
+    localStorage.setItem(
+        "billsplit_bills",
+        JSON.stringify(bills)
+    );
 
 }
 
@@ -290,51 +211,38 @@ function saveCouponHistory() {
 function loadSettings() {
 
     const currencySelect =
-        document.getElementById(
-            "currencySelect"
-        );
+        document.getElementById("currencySelect");
 
     const birthdayInput =
-        document.getElementById(
-            "birthdayInput"
-        );
+        document.getElementById("birthdayInput");
 
     const darkModeToggle =
-        document.getElementById(
-            "darkModeToggle"
-        );
+        document.getElementById("darkModeToggle");
 
 
     if (currencySelect) {
-
         currencySelect.value =
-            currencies[settings.currency]
-                ? settings.currency
-                : "INR";
-
+            settings.currency;
     }
 
 
     if (birthdayInput) {
-
         birthdayInput.value =
             settings.birthday || "";
-
     }
 
 
     if (darkModeToggle) {
-
         darkModeToggle.checked =
-            Boolean(settings.darkMode);
-
+            settings.darkMode;
     }
 
 
-    document.body.classList.toggle(
-        "dark",
-        Boolean(settings.darkMode)
-    );
+    if (settings.darkMode) {
+
+        document.body.classList.add("dark");
+
+    }
 
 }
 
@@ -342,10 +250,7 @@ function loadSettings() {
 function changeCurrency() {
 
     const select =
-        document.getElementById(
-            "currencySelect"
-        );
-
+        document.getElementById("currencySelect");
 
     if (!select) return;
 
@@ -353,22 +258,17 @@ function changeCurrency() {
     settings.currency =
         select.value;
 
-
     saveSettings();
 
     updateCurrencyUI();
 
     calculateBill();
 
-    renderCoupons();
-
     renderHistory();
 
     updateDashboard();
 
-    showToast(
-        "Currency updated"
-    );
+    showToast("Currency updated");
 
 }
 
@@ -376,19 +276,16 @@ function changeCurrency() {
 function updateCurrencyUI() {
 
     const symbol =
-        currencies[settings.currency] ||
-        "₹";
+        currencies[settings.currency] || "₹";
 
 
-    const element =
-        document.getElementById(
-            "currencySymbol"
-        );
+    const currencySymbol =
+        document.getElementById("currencySymbol");
 
 
-    if (element) {
+    if (currencySymbol) {
 
-        element.textContent =
+        currencySymbol.textContent =
             symbol;
 
     }
@@ -399,13 +296,13 @@ function updateCurrencyUI() {
 function toggleDarkMode() {
 
     const toggle =
-        document.getElementById(
-            "darkModeToggle"
-        );
+        document.getElementById("darkModeToggle");
+
+    if (!toggle) return;
 
 
     settings.darkMode =
-        Boolean(toggle && toggle.checked);
+        toggle.checked;
 
 
     document.body.classList.toggle(
@@ -422,22 +319,17 @@ function toggleDarkMode() {
 function saveBirthday() {
 
     const input =
-        document.getElementById(
-            "birthdayInput"
-        );
+        document.getElementById("birthdayInput");
+
+    if (!input) return;
 
 
     settings.birthday =
-        input
-            ? input.value
-            : "";
-
+        input.value;
 
     saveSettings();
 
-    showToast(
-        "Birthday saved"
-    );
+    showToast("Birthday saved");
 
 }
 
@@ -445,25 +337,6 @@ function saveBirthday() {
 /* =========================
    NAVIGATION
 ========================= */
-
-function setActiveNav(button) {
-
-    document
-        .querySelectorAll(".nav-item")
-        .forEach(
-            item =>
-                item.classList.remove("active")
-        );
-
-
-    if (button) {
-
-        button.classList.add("active");
-
-    }
-
-}
-
 
 function showPage(
     pageId,
@@ -473,57 +346,52 @@ function showPage(
     document
         .querySelectorAll(".page")
         .forEach(
-            page =>
-                page.classList.remove("active")
+            page => {
+
+                page.classList.remove(
+                    "active"
+                );
+
+            }
         );
 
 
     const page =
-        document.getElementById(
-            pageId
+        document.getElementById(pageId);
+
+
+    if (page) {
+
+        page.classList.add("active");
+
+    }
+
+
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(
+            button => {
+
+                button.classList.remove(
+                    "active"
+                );
+
+            }
         );
-
-
-    if (!page) return;
-
-
-    page.classList.add("active");
 
 
     if (navButton) {
 
-        setActiveNav(navButton);
+        navButton.classList.add(
+            "active"
+        );
 
     } else {
 
-        const buttons =
-            document.querySelectorAll(
-                ".nav-item"
-            );
-
-
-        buttons.forEach(button => {
-
-            button.classList.remove(
-                "active"
-            );
-
-        });
-
-
         const matchingButton =
-            Array.from(buttons)
-                .find(
-                    button =>
-                        button.getAttribute(
-                            "onclick"
-                        ) &&
-                        button.getAttribute(
-                            "onclick"
-                        ).includes(
-                            pageId
-                        )
-                );
+            document.querySelector(
+                `.nav-item[onclick*="'${pageId}'"]`
+            );
 
 
         if (matchingButton) {
@@ -545,6 +413,30 @@ function showPage(
 }
 
 
+function setActiveNav(button) {
+
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(
+            item => {
+
+                item.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    if (button) {
+
+        button.classList.add("active");
+
+    }
+
+}
+
+
 /* =========================
    CALCULATOR
 ========================= */
@@ -557,28 +449,11 @@ function openCalculator() {
         "calculatorPage"
     );
 
-
-    const buttons =
+    setActiveNav(
         document.querySelectorAll(
             ".nav-item"
-        );
-
-
-    buttons.forEach(
-        button =>
-            button.classList.remove(
-                "active"
-            )
+        )[1]
     );
-
-
-    if (buttons[1]) {
-
-        buttons[1].classList.add(
-            "active"
-        );
-
-    }
 
 }
 
@@ -589,7 +464,6 @@ function resetCalculator() {
         document.getElementById(
             "billName"
         );
-
 
     const billAmount =
         document.getElementById(
@@ -619,47 +493,60 @@ function resetCalculator() {
 
     billPhotoData = null;
 
+
     const preview =
         document.getElementById(
             "billPreview"
         );
 
 
-    const removeButton =
+    if (preview) {
+
+        preview.style.display =
+            "none";
+
+        preview.src = "";
+
+    }
+
+
+    const removePhoto =
         document.getElementById(
             "removePhotoBtn"
         );
 
 
-    if (preview) {
+    if (removePhoto) {
 
-        preview.removeAttribute(
-            "src"
-        );
-
-        preview.style.display =
+        removePhoto.style.display =
             "none";
 
     }
 
 
-    if (removeButton) {
+    const photoInput =
+        document.getElementById(
+            "billPhoto"
+        );
 
-        removeButton.style.display =
-            "none";
+
+    if (photoInput) {
+
+        photoInput.value = "";
 
     }
 
 
     document
-        .querySelectorAll(
-            ".tip-btn"
-        )
+        .querySelectorAll(".tip-btn")
         .forEach(
-            button =>
+            button => {
+
                 button.classList.remove(
                     "active"
-                )
+                );
+
+            }
         );
 
 
@@ -678,8 +565,6 @@ function resetCalculator() {
     }
 
 
-    splitMode = "equal";
-
     resetPeople();
 
     updateAppliedCouponUI();
@@ -689,39 +574,61 @@ function resetCalculator() {
 }
 
 
-/* =========================
-   MAIN CALCULATION
-========================= */
-
 function calculateBill() {
 
+    const amountInput =
+        document.getElementById(
+            "billAmount"
+        );
+
+
     const amount =
-        getBillAmount();
+        parseFloat(
+            amountInput
+                ? amountInput.value
+                : 0
+        ) || 0;
 
 
-    /* 2% PLATFORM FEE */
+    /* PLATFORM FEE */
 
     const platformFee =
-        calculatePlatformFee(
-            amount
+        amount *
+        (
+            PLATFORM_FEE_RATE /
+            100
         );
 
 
     /* TIP */
 
-    const tipPercent =
-        customTipValue !== null
-            ? customTipValue
-            : selectedTip;
+    let tipPercent =
+        selectedTip;
 
 
-    const tipAmount =
+    let tipAmount =
         amount *
-        tipPercent /
-        100;
+        (
+            tipPercent /
+            100
+        );
 
 
-    /* AUTOMATIC DISCOUNT */
+    if (
+        customTipValue !== null
+    ) {
+
+        tipAmount =
+            amount *
+            (
+                customTipValue /
+                100
+            );
+
+    }
+
+
+    /* DISCOUNT */
 
     const discountPercent =
         getDiscountPercent(
@@ -731,8 +638,10 @@ function calculateBill() {
 
     const discountAmount =
         amount *
-        discountPercent /
-        100;
+        (
+            discountPercent /
+            100
+        );
 
 
     /* COUPON */
@@ -751,12 +660,11 @@ function calculateBill() {
     }
 
 
-    /* FINAL TOTAL */
+    /* FINAL */
 
     const finalTotal =
         Math.max(
             0,
-
             amount +
             platformFee +
             tipAmount -
@@ -765,7 +673,7 @@ function calculateBill() {
         );
 
 
-    /* UPDATE UI */
+    /* UI */
 
     setText(
         "platformFeeAmount",
@@ -793,9 +701,7 @@ function calculateBill() {
 
     setText(
         "discountMessage",
-        getDiscountMessage(
-            amount
-        )
+        getDiscountMessage(amount)
     );
 
 
@@ -819,13 +725,19 @@ function calculateBill() {
 
     setText(
         "summaryDiscount",
-        "-" + formatMoney(discountAmount)
+        "-" +
+        formatMoney(
+            discountAmount
+        )
     );
 
 
     setText(
         "summaryCoupon",
-        "-" + formatMoney(couponDiscount)
+        "-" +
+        formatMoney(
+            couponDiscount
+        )
     );
 
 
@@ -839,11 +751,6 @@ function calculateBill() {
         finalTotal
     );
 
-
-    updatePaymentSummary(
-        finalTotal
-    );
-
 }
 
 
@@ -851,7 +758,9 @@ function calculateBill() {
    PLATFORM FEE
 ========================= */
 
-function calculatePlatformFee(amount) {
+function calculatePlatformFee(
+    amount
+) {
 
     return (
         Number(amount || 0) *
@@ -872,21 +781,22 @@ function selectTip(
 ) {
 
     selectedTip =
-        Number(percent) || 0;
+        percent;
 
-
-    customTipValue = null;
+    customTipValue =
+        null;
 
 
     document
-        .querySelectorAll(
-            ".tip-btn"
-        )
+        .querySelectorAll(".tip-btn")
         .forEach(
-            btn =>
+            btn => {
+
                 btn.classList.remove(
                     "active"
-                )
+                );
+
+            }
         );
 
 
@@ -913,7 +823,11 @@ function customTip() {
         );
 
 
-    if (value === null) return;
+    if (value === null) {
+
+        return;
+
+    }
 
 
     const percent =
@@ -921,12 +835,12 @@ function customTip() {
 
 
     if (
-        !Number.isFinite(percent) ||
+        isNaN(percent) ||
         percent < 0
     ) {
 
         showToast(
-            "Enter a valid tip percentage."
+            "Enter a valid tip percentage"
         );
 
         return;
@@ -941,14 +855,15 @@ function customTip() {
 
 
     document
-        .querySelectorAll(
-            ".tip-btn"
-        )
+        .querySelectorAll(".tip-btn")
         .forEach(
-            btn =>
+            btn => {
+
                 btn.classList.remove(
                     "active"
-                )
+                );
+
+            }
         );
 
 
@@ -963,7 +878,7 @@ function customTip() {
 
 
 /* =========================
-   DISCOUNT
+   AUTOMATIC DISCOUNT
 ========================= */
 
 function getDiscountPercent(
@@ -1009,40 +924,52 @@ function getDiscountMessage(
 
     if (amount <= 0) {
 
-        return "Add bill amount to calculate discount.";
+        return (
+            "Add bill amount to calculate discount."
+        );
 
     }
 
 
     if (amount < 1000) {
 
-        return `Spend ${formatMoney(1000)} or more to get 5% discount.`;
+        return (
+            "Spend ₹1,000 or more to get 5% discount."
+        );
 
     }
 
 
     if (amount < 2500) {
 
-        return "You received 5% automatic discount.";
+        return (
+            "You received 5% automatic discount."
+        );
 
     }
 
 
     if (amount < 3500) {
 
-        return "You received 15% automatic discount.";
+        return (
+            "You received 15% automatic discount."
+        );
 
     }
 
 
     if (amount < 5000) {
 
-        return "You received 20% automatic discount.";
+        return (
+            "You received 20% automatic discount."
+        );
 
     }
 
 
-    return "You received the maximum 25% automatic discount.";
+    return (
+        "You received the maximum 25% automatic discount."
+    );
 
 }
 
@@ -1061,9 +988,16 @@ function isCouponExpired(
 
     const expiry =
         new Date(
-            coupon.expiry +
-            "T23:59:59"
+            coupon.expiry
         );
+
+
+    expiry.setHours(
+        23,
+        59,
+        59,
+        999
+    );
 
 
     return today > expiry;
@@ -1073,7 +1007,9 @@ function isCouponExpired(
 
 function isFirstBill() {
 
-    return bills.length === 0;
+    return (
+        bills.length === 0
+    );
 
 }
 
@@ -1087,6 +1023,10 @@ function isBirthdayEligible() {
     }
 
 
+    const today =
+        new Date();
+
+
     const birthday =
         new Date(
             settings.birthday +
@@ -1094,14 +1034,9 @@ function isBirthdayEligible() {
         );
 
 
-    const today =
-        new Date();
-
-
     return (
         today.getMonth() ===
             birthday.getMonth() &&
-
         today.getDate() ===
             birthday.getDate()
     );
@@ -1113,29 +1048,37 @@ function validateCoupon(
     coupon
 ) {
 
+    const amountInput =
+        document.getElementById(
+            "billAmount"
+        );
+
+
     const amount =
-        getBillAmount();
+        parseFloat(
+            amountInput
+                ? amountInput.value
+                : 0
+        ) || 0;
 
 
     if (
-        isCouponExpired(
-            coupon
-        )
+        isCouponExpired(coupon)
     ) {
 
-        return "This coupon has expired.";
+        return (
+            "This coupon has expired."
+        );
 
     }
 
 
     if (
-        amount <
-        coupon.minBill
+        amount < coupon.minBill
     ) {
 
         return (
-            `Minimum bill amount is ` +
-            `${formatMoney(coupon.minBill)}.`
+            `Minimum bill amount is ${formatMoney(coupon.minBill)}.`
         );
 
     }
@@ -1147,8 +1090,7 @@ function validateCoupon(
     ) {
 
         return (
-            "This coupon is only available " +
-            "for your first bill."
+            "This coupon is only available for your first bill."
         );
 
     }
@@ -1160,8 +1102,7 @@ function validateCoupon(
     ) {
 
         return (
-            "This coupon is only available " +
-            "on your birthday."
+            "This coupon is only available on your birthday."
         );
 
     }
@@ -1187,8 +1128,10 @@ function calculateCouponDiscount(
 
         discount =
             amount *
-            coupon.value /
-            100;
+            (
+                coupon.value /
+                100
+            );
 
     } else {
 
@@ -1201,7 +1144,7 @@ function calculateCouponDiscount(
     if (
         coupon.maxDiscount &&
         discount >
-            coupon.maxDiscount
+        coupon.maxDiscount
     ) {
 
         discount =
@@ -1223,26 +1166,38 @@ function openCouponModal() {
     renderModalCoupons();
 
 
-    document
-        .getElementById(
+    const modal =
+        document.getElementById(
             "couponModal"
-        )
-        .classList.add(
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
             "active"
         );
+
+    }
 
 }
 
 
 function closeCouponModal() {
 
-    document
-        .getElementById(
+    const modal =
+        document.getElementById(
             "couponModal"
-        )
-        .classList.remove(
+        );
+
+
+    if (modal) {
+
+        modal.classList.remove(
             "active"
         );
+
+    }
 
 }
 
@@ -1258,6 +1213,9 @@ function renderCoupons() {
     if (!container) return;
 
 
+    container.innerHTML = "";
+
+
     const activeCoupons =
         coupons.filter(
             coupon =>
@@ -1267,7 +1225,9 @@ function renderCoupons() {
         );
 
 
-    if (!activeCoupons.length) {
+    if (
+        !activeCoupons.length
+    ) {
 
         container.innerHTML = `
             <div class="empty-state">
@@ -1282,15 +1242,16 @@ function renderCoupons() {
     }
 
 
-    container.innerHTML =
-        activeCoupons
-            .map(
-                coupon =>
-                    createCouponHTML(
-                        coupon
-                    )
-            )
-            .join("");
+    activeCoupons.forEach(
+        coupon => {
+
+            container.innerHTML +=
+                createCouponHTML(
+                    coupon
+                );
+
+        }
+    );
 
 }
 
@@ -1306,27 +1267,38 @@ function renderModalCoupons() {
     if (!container) return;
 
 
-    container.innerHTML =
-        coupons
-            .filter(
-                coupon =>
-                    !isCouponExpired(
-                        coupon
-                    )
-            )
-            .map(
-                coupon =>
-                    createCouponHTML(
-                        coupon
-                    )
-            )
-            .join("");
+    container.innerHTML = "";
+
+
+    coupons.forEach(
+        coupon => {
+
+            if (
+                isCouponExpired(
+                    coupon
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            container.innerHTML +=
+                createCouponHTML(
+                    coupon,
+                    true
+                );
+
+        }
+    );
 
 }
 
 
 function createCouponHTML(
-    coupon
+    coupon,
+    modal = false
 ) {
 
     let badges = "";
@@ -1365,11 +1337,8 @@ function createCouponHTML(
 
 
     const discountText =
-        coupon.type ===
-            "percentage"
-
+        coupon.type === "percentage"
             ? `${coupon.value}% OFF`
-
             : `${formatMoney(coupon.value)} OFF`;
 
 
@@ -1382,16 +1351,15 @@ function createCouponHTML(
                 <div>
 
                     <div class="coupon-code">
-                        ${escapeHTML(coupon.code)}
+                        ${coupon.code}
                     </div>
 
                     <p>
-                        ${escapeHTML(
-                            coupon.description
-                        )}
+                        ${coupon.description}
                     </p>
 
                 </div>
+
 
                 <div class="coupon-discount">
                     ${discountText}
@@ -1405,15 +1373,11 @@ function createCouponHTML(
                 ${badges}
 
                 <span>
-                    Min ${formatMoney(
-                        coupon.minBill
-                    )}
+                    Min ${formatMoney(coupon.minBill)}
                 </span>
 
                 <span>
-                    Expires ${formatDate(
-                        coupon.expiry
-                    )}
+                    Expires ${formatDate(coupon.expiry)}
                 </span>
 
             </div>
@@ -1421,9 +1385,7 @@ function createCouponHTML(
 
             <button
                 class="coupon-apply"
-                onclick="applyCoupon('${escapeHTML(
-                    coupon.code
-                )}')"
+                onclick="applyCoupon('${coupon.code}')"
             >
                 Apply Coupon
             </button>
@@ -1435,7 +1397,9 @@ function createCouponHTML(
 }
 
 
-function applyCoupon(code) {
+function applyCoupon(
+    code
+) {
 
     const coupon =
         coupons.find(
@@ -1447,7 +1411,7 @@ function applyCoupon(code) {
     if (!coupon) {
 
         showToast(
-            "Coupon not found."
+            "Coupon not found"
         );
 
         return;
@@ -1490,7 +1454,8 @@ function applyCoupon(code) {
 
 function removeCoupon() {
 
-    appliedCoupon = null;
+    appliedCoupon =
+        null;
 
     updateAppliedCouponUI();
 
@@ -1527,8 +1492,18 @@ function updateAppliedCouponUI() {
     }
 
 
+    const amountInput =
+        document.getElementById(
+            "billAmount"
+        );
+
+
     const amount =
-        getBillAmount();
+        parseFloat(
+            amountInput
+                ? amountInput.value
+                : 0
+        ) || 0;
 
 
     const discount =
@@ -1546,15 +1521,11 @@ function updateAppliedCouponUI() {
     container.innerHTML = `
 
         <strong>
-            🎟️ ${escapeHTML(
-                appliedCoupon.code
-            )}
+            🎟️ ${appliedCoupon.code}
         </strong>
 
         <span>
-            Saving ${formatMoney(
-                discount
-            )}
+            Saving ${formatMoney(discount)}
         </span>
 
         <button
@@ -1584,19 +1555,10 @@ function resetPeople() {
     people = [
 
         {
-            id:
-                Date.now() +
-                Math.random(),
-
-            name:
-                "Person 1",
-
-            amount:
-                0,
-
-            paid:
-                false
-
+            id: Date.now(),
+            name: "Person 1",
+            amount: 0,
+            paid: false
         }
 
     ];
@@ -1618,11 +1580,9 @@ function addPerson() {
         name:
             `Person ${people.length + 1}`,
 
-        amount:
-            0,
+        amount: 0,
 
-        paid:
-            false
+        paid: false
 
     });
 
@@ -1652,8 +1612,7 @@ function removePerson(id) {
     people =
         people.filter(
             person =>
-                String(person.id) !==
-                String(id)
+                person.id !== id
         );
 
 
@@ -1664,12 +1623,12 @@ function removePerson(id) {
 }
 
 
-function setSplitMode(mode) {
+function setSplitMode(
+    mode
+) {
 
     splitMode =
-        mode === "custom"
-            ? "custom"
-            : "equal";
+        mode;
 
 
     const equalButton =
@@ -1688,7 +1647,7 @@ function setSplitMode(mode) {
 
         equalButton.classList.toggle(
             "active",
-            splitMode === "equal"
+            mode === "equal"
         );
 
     }
@@ -1698,67 +1657,15 @@ function setSplitMode(mode) {
 
         customButton.classList.toggle(
             "active",
-            splitMode === "custom"
+            mode === "custom"
         );
 
     }
 
 
+    renderPeople();
+
     calculateBill();
-
-}
-
-
-function distributeEqual(
-    total
-) {
-
-    if (!people.length) return;
-
-
-    const roundedTotal =
-        Number(
-            total.toFixed(2)
-        );
-
-
-    const base =
-        Math.floor(
-            (
-                roundedTotal /
-                people.length
-            ) * 100
-        ) / 100;
-
-
-    let remaining =
-        roundedTotal;
-
-
-    people.forEach(
-        (person, index) => {
-
-            if (
-                index ===
-                people.length - 1
-            ) {
-
-                person.amount =
-                    Number(
-                        remaining.toFixed(2)
-                    );
-
-            } else {
-
-                person.amount =
-                    base;
-
-                remaining -= base;
-
-            }
-
-        }
-    );
 
 }
 
@@ -1767,21 +1674,98 @@ function updatePeopleAmounts(
     total
 ) {
 
-    if (!people.length) return;
+    if (!people.length) {
+
+        return;
+
+    }
 
 
     if (
-        splitMode === "equal"
+        splitMode ===
+        "equal"
     ) {
 
-        distributeEqual(
-            total
+        const amount =
+            total /
+            people.length;
+
+
+        people.forEach(
+            person => {
+
+                person.amount =
+                    Number(
+                        amount.toFixed(2)
+                    );
+
+            }
         );
 
     }
 
 
     renderPeople();
+
+}
+
+
+function renderPeople() {
+
+    const container =
+        document.getElementById(
+            "peopleList"
+        );
+
+
+    if (!container) return;
+
+
+    container.innerHTML = "";
+
+
+    people.forEach(
+        person => {
+
+            const amountValue =
+                person.amount || 0;
+
+
+            container.innerHTML += `
+
+                <div class="person-row">
+
+                    <input
+                        type="text"
+                        value="${escapeHTML(person.name)}"
+                        placeholder="Person name"
+                        onchange="updatePersonName('${person.id}', this.value)"
+                    >
+
+                    <input
+                        type="number"
+                        value="${amountValue.toFixed(2)}"
+                        ${splitMode === "equal" ? "readonly" : ""}
+                        onchange="updatePersonAmount('${person.id}', this.value)"
+                    >
+
+                    <button
+                        class="person-remove"
+                        onclick="removePerson('${person.id}')"
+                        title="Remove person"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    updatePaymentSummary();
 
 }
 
@@ -1799,15 +1783,13 @@ function updatePersonName(
         );
 
 
-    if (!person) return;
+    if (person) {
 
+        person.name =
+            value.trim() ||
+            "Unnamed";
 
-    person.name =
-        value.trim() ||
-        "Unnamed";
-
-
-    renderPeople();
+    }
 
 }
 
@@ -1817,15 +1799,6 @@ function updatePersonAmount(
     value
 ) {
 
-    if (
-        splitMode === "equal"
-    ) {
-
-        return;
-
-    }
-
-
     const person =
         people.find(
             item =>
@@ -1834,27 +1807,15 @@ function updatePersonAmount(
         );
 
 
-    if (!person) return;
+    if (person) {
+
+        person.amount =
+            parseFloat(value) || 0;
+
+    }
 
 
-    const amount =
-        parseFloat(value);
-
-
-    person.amount =
-        Number.isFinite(amount) &&
-        amount >= 0
-            ? Number(
-                amount.toFixed(2)
-            )
-            : 0;
-
-
-    renderPeople();
-
-    updatePaymentSummary(
-        getFinalTotal()
-    );
+    updatePaymentSummary();
 
 }
 
@@ -1878,206 +1839,85 @@ function togglePaid(id) {
 
     renderPeople();
 
-    updatePaymentSummary(
-        getFinalTotal()
-    );
-
 }
 
 
-function renderPeople() {
-
-    const container =
-        document.getElementById(
-            "peopleList"
-        );
-
-
-    if (!container) return;
-
-
-    container.innerHTML = "";
-
-
-    people.forEach(
-        person => {
-
-            container.innerHTML += `
-
-                <div class="person-row">
-
-                    <input
-                        type="text"
-                        value="${escapeHTML(
-                            person.name
-                        )}"
-                        placeholder="Person name"
-                        onchange="updatePersonName(
-                            '${person.id}',
-                            this.value
-                        )"
-                    >
-
-                    <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value="${Number(
-                            person.amount || 0
-                        ).toFixed(2)}"
-                        ${
-                            splitMode === "equal"
-                                ? "disabled"
-                                : ""
-                        }
-                        onchange="updatePersonAmount(
-                            '${person.id}',
-                            this.value
-                        )"
-                    >
-
-                    <button
-                        class="person-remove"
-                        onclick="removePerson(
-                            '${person.id}'
-                        )"
-                    >
-                        ×
-                    </button>
-
-                </div>
-
-                <div
-                    style="
-                        display:flex;
-                        justify-content:flex-end;
-                        margin-top:-4px;
-                        margin-bottom:8px;
-                    "
-                >
-
-                    <button
-                        onclick="togglePaid(
-                            '${person.id}'
-                        )"
-                        style="
-                            border:none;
-                            background:none;
-                            color:${
-                                person.paid
-                                    ? "#16a34a"
-                                    : "#6b7280"
-                            };
-                            font-size:11px;
-                            font-weight:700;
-                        "
-                    >
-                        ${
-                            person.paid
-                                ? "✓ Paid"
-                                : "○ Mark as Paid"
-                        }
-                    </button>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-}
-
-
-/* =========================
-   PAYMENT SUMMARY
-========================= */
-
-function getFinalTotal() {
-
-    const amount =
-        getBillAmount();
-
-
-    const platformFee =
-        calculatePlatformFee(
-            amount
-        );
-
-
-    const tipPercent =
-        customTipValue !== null
-            ? customTipValue
-            : selectedTip;
-
-
-    const tip =
-        amount *
-        tipPercent /
-        100;
-
-
-    const discountPercent =
-        getDiscountPercent(
-            amount
-        );
-
-
-    const discount =
-        amount *
-        discountPercent /
-        100;
-
-
-    const couponDiscount =
-        appliedCoupon
-            ? calculateCouponDiscount(
-                appliedCoupon,
-                amount
-            )
-            : 0;
-
-
-    return Math.max(
-        0,
-
-        amount +
-        platformFee +
-        tip -
-        discount -
-        couponDiscount
-    );
-
-}
-
-
-function updatePaymentSummary(
-    total
-) {
+function updatePaymentSummary() {
 
     const paid =
+        people
+            .filter(
+                person =>
+                    person.paid
+            )
+            .reduce(
+                (
+                    sum,
+                    person
+                ) =>
+                    sum +
+                    Number(
+                        person.amount ||
+                        0
+                    ),
+                0
+            );
+
+
+    const total =
         people.reduce(
             (
                 sum,
                 person
             ) =>
-                person.paid
-                    ? sum +
-                        Number(
-                            person.amount || 0
-                        )
-                    : sum,
-
+                sum +
+                Number(
+                    person.amount ||
+                    0
+                ),
             0
         );
 
 
-    const remaining =
-        Math.max(
-            0,
-            total -
-            paid
+    const finalElement =
+        document.getElementById(
+            "finalTotal"
         );
+
+
+    const finalTotal =
+        finalElement
+            ? parseDisplayedMoney(
+                finalElement.textContent
+            )
+            : 0;
+
+
+    let remaining;
+
+
+    if (
+        splitMode ===
+        "custom"
+    ) {
+
+        remaining =
+            Math.max(
+                0,
+                finalTotal -
+                paid
+            );
+
+    } else {
+
+        remaining =
+            Math.max(
+                0,
+                total -
+                paid
+            );
+
+    }
 
 
     setText(
@@ -2098,106 +1938,6 @@ function updatePaymentSummary(
    BILL PHOTO
 ========================= */
 
-function setupPhotoInput() {
-
-    const input =
-        document.getElementById(
-            "billPhoto"
-        );
-
-
-    if (!input) return;
-
-
-    input.addEventListener(
-        "change",
-        function (event) {
-
-            const file =
-                event.target.files &&
-                event.target.files[0];
-
-
-            if (!file) return;
-
-
-            if (
-                !file.type.startsWith(
-                    "image/"
-                )
-            ) {
-
-                showToast(
-                    "Please select an image."
-                );
-
-                return;
-
-            }
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                function (e) {
-
-                    billPhotoData =
-                        e.target.result;
-
-
-                    const preview =
-                        document.getElementById(
-                            "billPreview"
-                        );
-
-
-                    const removeButton =
-                        document.getElementById(
-                            "removePhotoBtn"
-                        );
-
-
-                    preview.src =
-                        billPhotoData;
-
-
-                    preview.style.display =
-                        "block";
-
-
-                    removeButton.style.display =
-                        "block";
-
-
-                    showToast(
-                        "Bill photo added"
-                    );
-
-                };
-
-
-            reader.onerror =
-                function () {
-
-                    showToast(
-                        "Unable to read image."
-                    );
-
-                };
-
-
-            reader.readAsDataURL(
-                file
-            );
-
-        }
-    );
-
-}
-
-
 function openCamera() {
 
     const input =
@@ -2215,26 +1955,118 @@ function openCamera() {
 }
 
 
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const photoInput =
+            document.getElementById(
+                "billPhoto"
+            );
+
+
+        if (!photoInput) return;
+
+
+        photoInput.addEventListener(
+            "change",
+            function (event) {
+
+                const file =
+                    event.target.files[0];
+
+
+                if (!file) {
+
+                    return;
+
+                }
+
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    showToast(
+                        "Please select an image."
+                    );
+
+                    return;
+
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function (e) {
+
+                        billPhotoData =
+                            e.target.result;
+
+
+                        const preview =
+                            document.getElementById(
+                                "billPreview"
+                            );
+
+
+                        if (preview) {
+
+                            preview.src =
+                                billPhotoData;
+
+                            preview.style.display =
+                                "block";
+
+                        }
+
+
+                        const removeButton =
+                            document.getElementById(
+                                "removePhotoBtn"
+                            );
+
+
+                        if (removeButton) {
+
+                            removeButton.style.display =
+                                "block";
+
+                        }
+
+
+                        showToast(
+                            "Bill photo added"
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+
+            }
+        );
+
+    }
+);
+
+
 function removeBillPhoto() {
 
-    billPhotoData = null;
+    billPhotoData =
+        null;
 
 
     const input =
         document.getElementById(
             "billPhoto"
-        );
-
-
-    const preview =
-        document.getElementById(
-            "billPreview"
-        );
-
-
-    const removeButton =
-        document.getElementById(
-            "removePhotoBtn"
         );
 
 
@@ -2245,16 +2077,26 @@ function removeBillPhoto() {
     }
 
 
+    const preview =
+        document.getElementById(
+            "billPreview"
+        );
+
+
     if (preview) {
 
-        preview.removeAttribute(
-            "src"
-        );
+        preview.src = "";
 
         preview.style.display =
             "none";
 
     }
+
+
+    const removeButton =
+        document.getElementById(
+            "removePhotoBtn"
+        );
 
 
     if (removeButton) {
@@ -2273,16 +2115,30 @@ function removeBillPhoto() {
 
 function saveBill() {
 
+    const nameElement =
+        document.getElementById(
+            "billName"
+        );
+
+
+    const amountElement =
+        document.getElementById(
+            "billAmount"
+        );
+
+
     const name =
-        (
-            document.getElementById(
-                "billName"
-            )?.value || ""
-        ).trim();
+        nameElement
+            ? nameElement.value.trim()
+            : "";
 
 
     const amount =
-        getBillAmount();
+        parseFloat(
+            amountElement
+                ? amountElement.value
+                : 0
+        ) || 0;
 
 
     if (!name) {
@@ -2296,23 +2152,10 @@ function saveBill() {
     }
 
 
-    if (
-        amount <= 0
-    ) {
+    if (amount <= 0) {
 
         showToast(
             "Please enter a valid bill amount."
-        );
-
-        return;
-
-    }
-
-
-    if (!people.length) {
-
-        showToast(
-            "Add at least one person."
         );
 
         return;
@@ -2362,7 +2205,6 @@ function saveBill() {
     const total =
         Math.max(
             0,
-
             amount +
             platformFee +
             tip -
@@ -2371,17 +2213,12 @@ function saveBill() {
         );
 
 
-    /* SPLIT */
+    /* CUSTOM SPLIT */
 
     if (
-        splitMode === "equal"
+        splitMode ===
+        "custom"
     ) {
-
-        distributeEqual(
-            total
-        );
-
-    } else {
 
         const peopleTotal =
             people.reduce(
@@ -2391,9 +2228,9 @@ function saveBill() {
                 ) =>
                     sum +
                     Number(
-                        person.amount || 0
+                        person.amount ||
+                        0
                     ),
-
                 0
             );
 
@@ -2413,6 +2250,24 @@ function saveBill() {
 
         }
 
+    } else {
+
+        const each =
+            total /
+            people.length;
+
+
+        people.forEach(
+            person => {
+
+                person.amount =
+                    Number(
+                        each.toFixed(2)
+                    );
+
+            }
+        );
+
     }
 
 
@@ -2421,8 +2276,7 @@ function saveBill() {
         id:
             Date.now().toString(),
 
-        name:
-            name,
+        name,
 
         date:
             new Date().toISOString(),
@@ -2445,13 +2299,9 @@ function saveBill() {
                 tip.toFixed(2)
             ),
 
-        tipPercent:
-            Number(
-                tipPercent.toFixed(2)
-            ),
+        tipPercent,
 
-        discountPercent:
-            discountPercent,
+        discountPercent,
 
         discount:
             Number(
@@ -2563,6 +2413,9 @@ function renderHistory() {
     if (!container) return;
 
 
+    container.innerHTML = "";
+
+
     if (!bills.length) {
 
         container.innerHTML = `
@@ -2571,7 +2424,9 @@ function renderHistory() {
 
                 <div>🧾</div>
 
-                <h3>No bills yet</h3>
+                <h3>
+                    No bills yet
+                </h3>
 
                 <p>
                     Your saved bills will appear here.
@@ -2586,15 +2441,19 @@ function renderHistory() {
     }
 
 
-    container.innerHTML =
-        bills
-            .map(
-                bill =>
-                    createBillCard(
-                        bill
-                    )
-            )
-            .join("");
+    bills.forEach(
+        bill => {
+
+            container.innerHTML +=
+                createBillCard(
+                    bill
+                );
+
+        }
+    );
+
+
+    renderRecentBills();
 
 }
 
@@ -2625,7 +2484,9 @@ function renderRecentBills() {
 
                 <div>🧾</div>
 
-                <h3>No bills yet</h3>
+                <h3>
+                    No bills yet
+                </h3>
 
                 <p>
                     Create your first bill to see it here.
@@ -2661,24 +2522,16 @@ function createBillCard(
         currencies[
             bill.currency
         ] ||
-        "₹";
-
-
-    const peopleCount =
-        Array.isArray(
-            bill.people
-        )
-            ? bill.people.length
-            : 0;
+        currencies[
+            settings.currency
+        ];
 
 
     return `
 
         <div
             class="bill-card"
-            onclick="openBillDetails(
-                '${escapeHTML(bill.id)}'
-            )"
+            onclick="openBillDetails('${bill.id}')"
         >
 
             <div class="bill-card-top">
@@ -2699,10 +2552,13 @@ function createBillCard(
 
                 </div>
 
+
                 <div class="bill-total">
+
                     ${symbol}${Number(
                         bill.total || 0
                     ).toFixed(2)}
+
                 </div>
 
             </div>
@@ -2711,16 +2567,14 @@ function createBillCard(
             <div class="bill-card-bottom">
 
                 <span>
-                    👥 ${peopleCount} people
+                    👥 ${bill.people.length} people
                 </span>
 
                 <span>
                     ${
                         bill.coupon
                             ? "🎟️ " +
-                                escapeHTML(
-                                    bill.coupon
-                                )
+                              bill.coupon
                             : "No coupon"
                     }
                 </span>
@@ -2733,10 +2587,6 @@ function createBillCard(
 
 }
 
-
-/* =========================
-   BILL DETAILS
-========================= */
 
 function openBillDetails(
     id
@@ -2756,36 +2606,25 @@ function openBillDetails(
     const symbol =
         currencies[
             bill.currency
-        ] ||
-        "₹";
+        ] || "₹";
 
 
     const platformFee =
         Number(
-            bill.platformFee ??
-            bill.gst ??
+            bill.platformFee ||
             0
         );
 
 
     const platformFeeRate =
         Number(
-            bill.platformFeeRate ??
-            bill.gstRate ??
+            bill.platformFeeRate ||
             PLATFORM_FEE_RATE
         );
 
 
-    const billPeople =
-        Array.isArray(
-            bill.people
-        )
-            ? bill.people
-            : [];
-
-
     const peopleHTML =
-        billPeople
+        bill.people
             .map(
                 person => `
 
@@ -2798,8 +2637,10 @@ function openBillDetails(
                         </span>
 
                         <strong>
+
                             ${symbol}${Number(
-                                person.amount || 0
+                                person.amount ||
+                                0
                             ).toFixed(2)}
 
                             ${
@@ -2817,13 +2658,9 @@ function openBillDetails(
             .join("");
 
 
-    const details =
-        document.getElementById(
-            "billDetails"
-        );
-
-
-    details.innerHTML = `
+    document.getElementById(
+        "billDetails"
+    ).innerHTML = `
 
         <div class="detail-section">
 
@@ -2852,7 +2689,8 @@ function openBillDetails(
 
                 <strong>
                     ${symbol}${Number(
-                        bill.subtotal || 0
+                        bill.subtotal ||
+                        0
                     ).toFixed(2)}
                 </strong>
 
@@ -2880,7 +2718,8 @@ function openBillDetails(
 
                 <strong>
                     ${symbol}${Number(
-                        bill.tip || 0
+                        bill.tip ||
+                        0
                     ).toFixed(2)}
                 </strong>
 
@@ -2891,13 +2730,15 @@ function openBillDetails(
 
                 <span>
                     Discount (${Number(
-                        bill.discountPercent || 0
+                        bill.discountPercent ||
+                        0
                     )}%)
                 </span>
 
                 <strong>
                     -${symbol}${Number(
-                        bill.discount || 0
+                        bill.discount ||
+                        0
                     ).toFixed(2)}
                 </strong>
 
@@ -2912,7 +2753,8 @@ function openBillDetails(
 
                 <strong>
                     -${symbol}${Number(
-                        bill.couponDiscount || 0
+                        bill.couponDiscount ||
+                        0
                     ).toFixed(2)}
                 </strong>
 
@@ -2927,7 +2769,8 @@ function openBillDetails(
 
                 <strong>
                     ${symbol}${Number(
-                        bill.total || 0
+                        bill.total ||
+                        0
                     ).toFixed(2)}
                 </strong>
 
@@ -2938,7 +2781,9 @@ function openBillDetails(
 
         <div class="detail-section">
 
-            <h3>People</h3>
+            <h3>
+                People
+            </h3>
 
             ${peopleHTML}
 
@@ -2947,9 +2792,7 @@ function openBillDetails(
 
         <button
             class="primary-btn big-btn"
-            onclick="shareBill(
-                '${escapeHTML(bill.id)}'
-            )"
+            onclick="shareBill('${bill.id}')"
         >
             📤 Share Bill
         </button>
@@ -2961,9 +2804,7 @@ function openBillDetails(
                 margin-top:8px;
                 background:#25D366;
             "
-            onclick="shareWhatsApp(
-                '${escapeHTML(bill.id)}'
-            )"
+            onclick="shareWhatsApp('${bill.id}')"
         >
             🟢 Share on WhatsApp
         </button>
@@ -2975,9 +2816,7 @@ function openBillDetails(
                 width:100%;
                 margin-top:8px;
             "
-            onclick="deleteBill(
-                '${escapeHTML(bill.id)}'
-            )"
+            onclick="deleteBill('${bill.id}')"
         >
             🗑️ Delete Bill
         </button>
@@ -2985,31 +2824,45 @@ function openBillDetails(
     `;
 
 
-    document
-        .getElementById(
+    const modal =
+        document.getElementById(
             "billDetailsModal"
-        )
-        .classList.add(
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
             "active"
         );
+
+    }
 
 }
 
 
 function closeBillDetails() {
 
-    document
-        .getElementById(
+    const modal =
+        document.getElementById(
             "billDetailsModal"
-        )
-        .classList.remove(
+        );
+
+
+    if (modal) {
+
+        modal.classList.remove(
             "active"
         );
+
+    }
 
 }
 
 
-function deleteBill(id) {
+function deleteBill(
+    id
+) {
 
     if (
         !confirm(
@@ -3106,9 +2959,11 @@ function clearAllData() {
         "billsplit_bills"
     );
 
+
     localStorage.removeItem(
         "billsplit_settings"
     );
+
 
     localStorage.removeItem(
         "billsplit_coupon_history"
@@ -3136,30 +2991,24 @@ function clearAllData() {
     );
 
 
-    const darkToggle =
+    const darkModeToggle =
         document.getElementById(
             "darkModeToggle"
         );
+
+
+    if (darkModeToggle) {
+
+        darkModeToggle.checked =
+            false;
+
+    }
 
 
     const currencySelect =
         document.getElementById(
             "currencySelect"
         );
-
-
-    const birthdayInput =
-        document.getElementById(
-            "birthdayInput"
-        );
-
-
-    if (darkToggle) {
-
-        darkToggle.checked =
-            false;
-
-    }
 
 
     if (currencySelect) {
@@ -3170,6 +3019,12 @@ function clearAllData() {
     }
 
 
+    const birthdayInput =
+        document.getElementById(
+            "birthdayInput"
+        );
+
+
     if (birthdayInput) {
 
         birthdayInput.value =
@@ -3178,11 +3033,11 @@ function clearAllData() {
     }
 
 
-    updateCurrencyUI();
-
     renderHistory();
 
     updateDashboard();
+
+    updateCurrencyUI();
 
     showToast(
         "All data cleared"
@@ -3197,10 +3052,18 @@ function clearAllData() {
 
 function updateDashboard() {
 
-    setText(
-        "totalBills",
-        bills.length
-    );
+    const totalBills =
+        document.getElementById(
+            "totalBills"
+        );
+
+
+    if (totalBills) {
+
+        totalBills.textContent =
+            bills.length;
+
+    }
 
 
     const totalSaved =
@@ -3209,27 +3072,33 @@ function updateDashboard() {
                 sum,
                 bill
             ) =>
-
                 sum +
-
                 Number(
-                    bill.discount || 0
+                    bill.discount ||
+                    0
                 ) +
-
                 Number(
-                    bill.couponDiscount || 0
+                    bill.couponDiscount ||
+                    0
                 ),
-
             0
         );
 
 
-    setText(
-        "totalSaved",
-        formatMoney(
-            totalSaved
-        )
-    );
+    const totalSavedElement =
+        document.getElementById(
+            "totalSaved"
+        );
+
+
+    if (totalSavedElement) {
+
+        totalSavedElement.textContent =
+            formatMoney(
+                totalSaved
+            );
+
+    }
 
 
     renderRecentBills();
@@ -3248,27 +3117,27 @@ function generateShareText(
     const symbol =
         currencies[
             bill.currency
-        ] ||
-        "₹";
+        ] || "₹";
 
 
     const platformFee =
         Number(
-            bill.platformFee ??
-            bill.gst ??
+            bill.platformFee ||
             0
         );
 
 
     const platformFeeRate =
         Number(
-            bill.platformFeeRate ??
-            bill.gstRate ??
-            2
+            bill.platformFeeRate ||
+            PLATFORM_FEE_RATE
         );
 
 
-    let text =
+    let text = "";
+
+
+    text +=
         "🧾 BillSplit\n\n";
 
 
@@ -3324,28 +3193,20 @@ function generateShareText(
         "People:\n";
 
 
-    if (
-        Array.isArray(
-            bill.people
-        )
-    ) {
+    bill.people.forEach(
+        person => {
 
-        bill.people.forEach(
-            person => {
+            text +=
+                `${person.name}: ${symbol}${Number(
+                    person.amount || 0
+                ).toFixed(2)} ${
+                    person.paid
+                        ? "✓ Paid"
+                        : "Unpaid"
+                }\n`;
 
-                text +=
-                    `${person.name}: ${symbol}${Number(
-                        person.amount || 0
-                    ).toFixed(2)} ${
-                        person.paid
-                            ? "✓ Paid"
-                            : "Unpaid"
-                    }\n`;
-
-            }
-        );
-
-    }
+        }
+    );
 
 
     text +=
@@ -3389,37 +3250,28 @@ async function shareBill(
                 title:
                     "BillSplit Bill",
 
-                text:
-                    text
+                text
 
             });
 
-            return;
-
         } catch (error) {
 
-            if (
-                error.name ===
-                "AbortError"
-            ) {
-
-                return;
-
-            }
+            /* User cancelled share */
 
         }
 
+    } else {
+
+        await copyToClipboard(
+            text
+        );
+
+
+        showToast(
+            "Bill copied to clipboard"
+        );
+
     }
-
-
-    await copyToClipboard(
-        text
-    );
-
-
-    showToast(
-        "Bill copied to clipboard"
-    );
 
 }
 
@@ -3452,19 +3304,10 @@ function shareWhatsApp(
         );
 
 
-    const popup =
-        window.open(
-            url,
-            "_blank"
-        );
-
-
-    if (!popup) {
-
-        window.location.href =
-            url;
-
-    }
+    window.open(
+        url,
+        "_blank"
+    );
 
 }
 
@@ -3472,34 +3315,6 @@ function shareWhatsApp(
 /* =========================
    HELPERS
 ========================= */
-
-function getBillAmount() {
-
-    const input =
-        document.getElementById(
-            "billAmount"
-        );
-
-
-    const amount =
-        input
-            ? parseFloat(
-                input.value
-            )
-            : 0;
-
-
-    return Number.isFinite(
-        amount
-    )
-        ? Math.max(
-            0,
-            amount
-        )
-        : 0;
-
-}
-
 
 function setText(
     id,
@@ -3522,27 +3337,45 @@ function setText(
 }
 
 
-function getCurrencySymbol() {
+function formatMoney(
+    amount
+) {
 
-    return (
+    const symbol =
         currencies[
             settings.currency
-        ] ||
-        "₹"
+        ] || "₹";
+
+
+    return (
+        symbol +
+        Number(
+            amount || 0
+        ).toFixed(2)
     );
 
 }
 
 
-function formatMoney(
-    amount
+function parseDisplayedMoney(
+    text
 ) {
 
+    if (!text) {
+
+        return 0;
+
+    }
+
+
     return (
-        getCurrencySymbol() +
-        Number(
-            amount || 0
-        ).toFixed(2)
+        parseFloat(
+            String(text)
+                .replace(
+                    /[^\d.-]/g,
+                    ""
+                )
+        ) || 0
     );
 
 }
@@ -3556,17 +3389,6 @@ function formatDate(
         new Date(
             dateString
         );
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "-";
-
-    }
 
 
     return date.toLocaleDateString(
@@ -3591,17 +3413,6 @@ function formatDateTime(
         );
 
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "-";
-
-    }
-
-
     return date.toLocaleString(
         "en-IN",
         {
@@ -3620,25 +3431,28 @@ function escapeHTML(
     value
 ) {
 
-    return String(
-        value ?? ""
-    )
+    return String(value)
+
         .replace(
             /&/g,
             "&amp;"
         )
+
         .replace(
             /</g,
             "&lt;"
         )
+
         .replace(
             />/g,
             "&gt;"
         )
+
         .replace(
             /"/g,
             "&quot;"
         )
+
         .replace(
             /'/g,
             "&#039;"
@@ -3655,21 +3469,23 @@ async function copyToClipboard(
 
         if (
             navigator.clipboard &&
-            window.isSecureContext
+            navigator.clipboard.writeText
         ) {
 
             await navigator.clipboard.writeText(
                 text
             );
 
-            return true;
+            return;
 
         }
 
-    } catch (error) {}
 
+        throw new Error(
+            "Clipboard unavailable"
+        );
 
-    try {
+    } catch (error) {
 
         const textarea =
             document.createElement(
@@ -3684,9 +3500,8 @@ async function copyToClipboard(
         textarea.style.position =
             "fixed";
 
-
-        textarea.style.opacity =
-            "0";
+        textarea.style.left =
+            "-9999px";
 
 
         document.body.appendChild(
@@ -3694,25 +3509,15 @@ async function copyToClipboard(
         );
 
 
-        textarea.focus();
-
         textarea.select();
 
 
-        const successful =
-            document.execCommand(
-                "copy"
-            );
+        document.execCommand(
+            "copy"
+        );
 
 
         textarea.remove();
-
-
-        return successful;
-
-    } catch (error) {
-
-        return false;
 
     }
 
@@ -3741,21 +3546,15 @@ function showToast(
     );
 
 
-    clearTimeout(
-        window.billSplitToastTimer
+    setTimeout(
+        function () {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        2500
     );
-
-
-    window.billSplitToastTimer =
-        setTimeout(
-            function () {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2500
-        );
 
 }
