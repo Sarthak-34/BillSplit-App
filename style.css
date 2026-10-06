@@ -33,11 +33,9 @@
     padding: 0;
 }
 
-
 html {
     scroll-behavior: smooth;
 }
-
 
 body {
     font-family: "Inter", sans-serif;
@@ -47,13 +45,11 @@ body {
     padding-bottom: 90px;
 }
 
-
 button,
 input,
 select {
     font-family: inherit;
 }
-
 
 button {
     cursor: pointer;
@@ -73,7 +69,6 @@ button {
     z-index: 20;
 }
 
-
 .logo-area {
     max-width: 720px;
     margin: auto;
@@ -82,29 +77,23 @@ button {
     gap: 12px;
 }
 
-
 .logo-icon {
     width: 45px;
     height: 45px;
     border-radius: 13px;
-
     background: var(--primary);
     color: white;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 22px;
     font-weight: 800;
 }
-
 
 .logo-area h1 {
     font-size: 20px;
     font-weight: 800;
 }
-
 
 .logo-area p {
     font-size: 12px;
@@ -123,16 +112,13 @@ main {
     padding: 20px 16px;
 }
 
-
 .page {
     display: none;
 }
 
-
 .page.active {
     display: block;
 }
-
 
 .page-title {
     display: flex;
@@ -142,19 +128,16 @@ main {
     margin-bottom: 18px;
 }
 
-
 .page-title h2 {
     font-size: 25px;
     font-weight: 800;
 }
-
 
 .page-title p {
     color: var(--muted);
     font-size: 13px;
     margin-top: 4px;
 }
-
 
 .back-btn {
     width: 40px;
@@ -189,7 +172,6 @@ main {
     margin-bottom: 16px;
 }
 
-
 .welcome-label {
     font-size: 11px;
     font-weight: 800;
@@ -197,19 +179,16 @@ main {
     opacity: 0.8;
 }
 
-
 .welcome-card h2 {
     font-size: 25px;
     line-height: 1.25;
     margin: 8px 0;
 }
 
-
 .welcome-card p {
     font-size: 13px;
     opacity: 0.9;
 }
-
 
 .welcome-icon {
     font-size: 55px;
@@ -227,7 +206,6 @@ main {
     margin-bottom: 16px;
 }
 
-
 .stat-card {
     background: var(--card);
     border-radius: var(--radius);
@@ -235,11 +213,9 @@ main {
     box-shadow: var(--shadow);
 }
 
-
 .stat-card span {
     font-size: 20px;
 }
-
 
 .stat-card small {
     display: block;
@@ -247,7 +223,6 @@ main {
     margin-top: 10px;
     font-size: 12px;
 }
-
 
 .stat-card strong {
     display: block;
@@ -274,7 +249,6 @@ main {
     box-shadow: var(--shadow);
 }
 
-
 .card h3,
 .payment-card h3,
 .summary-card h3,
@@ -282,11 +256,9 @@ main {
     font-size: 16px;
 }
 
-
 .card > h3 {
     margin-bottom: 16px;
 }
-
 
 .card-heading {
     display: flex;
@@ -294,7 +266,6 @@ main {
     justify-content: space-between;
     gap: 12px;
 }
-
 
 .card-heading p {
     color: var(--muted);
@@ -314,21 +285,17 @@ label {
     margin: 14px 0 7px;
 }
 
-
 input,
 select {
     width: 100%;
     border: 1px solid var(--border);
     background: var(--card);
     color: var(--text);
-
     border-radius: 12px;
     padding: 13px 14px;
-
     outline: none;
     font-size: 14px;
 }
-
 
 input:focus,
 select:focus {
@@ -337,23 +304,18 @@ select:focus {
         0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 
-
 .money-input {
     display: flex;
     align-items: center;
-
     border: 1px solid var(--border);
     border-radius: 12px;
-
     overflow: hidden;
 }
-
 
 .money-input span {
     padding-left: 14px;
     font-weight: 700;
 }
-
 
 .money-input input {
     border: none;
@@ -369,21 +331,16 @@ select:focus {
     width: 100%;
     border: none;
     border-radius: 13px;
-
     background: var(--primary);
     color: white;
-
     font-weight: 700;
     padding: 13px 16px;
-
     transition: 0.2s;
 }
-
 
 .primary-btn:hover {
     background: var(--primary-dark);
 }
-
 
 .big-btn {
     padding: 15px;
@@ -391,31 +348,24 @@ select:focus {
     margin-bottom: 14px;
 }
 
-
 .secondary-btn {
     border: 1px solid var(--border);
     background: var(--card);
     color: var(--text);
-
     border-radius: 11px;
     padding: 11px 14px;
-
     font-weight: 600;
 }
-
 
 .small-btn {
     border: none;
     background: var(--primary-light);
     color: var(--primary-dark);
-
     border-radius: 9px;
     padding: 8px 11px;
-
     font-size: 11px;
     font-weight: 700;
 }
-
 
 .text-btn {
     background: none;
@@ -425,25 +375,20 @@ select:focus {
     font-weight: 700;
 }
 
-
 .danger {
     background: #fee2e2;
     color: #dc2626;
 }
-
 
 .danger-btn {
     width: 100%;
     border: none;
     background: #ef4444;
     color: white;
-
     border-radius: 11px;
     padding: 12px;
-
     font-weight: 700;
 }
-
 
 .full-btn {
     width: 100%;
@@ -470,31 +415,25 @@ select:focus {
     border: 1px solid #bbf7d0;
 }
 
-
 .fee-icon {
     width: 42px;
     height: 42px;
-
     border-radius: 12px;
     background: var(--primary);
     color: white;
-
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-
 .fee-content {
     flex: 1;
 }
-
 
 .fee-content strong {
     display: block;
     font-size: 14px;
 }
-
 
 .fee-content span {
     display: block;
@@ -515,17 +454,13 @@ select:focus {
     margin-top: 15px;
 }
 
-
 .tip-btn {
     border: 1px solid var(--border);
     background: var(--card);
-
     border-radius: 10px;
     padding: 10px 5px;
-
     font-weight: 600;
 }
-
 
 .tip-btn.active {
     background: var(--primary);
@@ -543,18 +478,15 @@ select:focus {
     border: 1px solid #fde68a;
 }
 
-
 .discount-card p {
     color: #92400e;
 }
-
 
 .discount-saving {
     margin-top: 12px;
     font-size: 12px;
     color: #92400e;
 }
-
 
 .discount-saving strong {
     margin-left: 5px;
@@ -573,29 +505,23 @@ select:focus {
     font-size: 12px;
 }
 
-
 .applied-coupon span {
     color: var(--muted);
     margin-left: 8px;
 }
 
-
 .hidden {
     display: none !important;
 }
-
 
 .coupon-card {
     background: var(--card);
     border-radius: var(--radius);
     padding: 17px;
-
     margin-bottom: 12px;
     box-shadow: var(--shadow);
-
     border: 1px solid var(--border);
 }
-
 
 .coupon-top {
     display: flex;
@@ -603,13 +529,11 @@ select:focus {
     gap: 12px;
 }
 
-
 .coupon-code {
     font-weight: 800;
     color: var(--primary-dark);
     letter-spacing: 0.5px;
 }
-
 
 .coupon-top p {
     color: var(--muted);
@@ -617,13 +541,11 @@ select:focus {
     margin-top: 5px;
 }
 
-
 .coupon-discount {
     white-space: nowrap;
     font-weight: 800;
     color: var(--primary);
 }
-
 
 .coupon-meta {
     display: flex;
@@ -632,29 +554,22 @@ select:focus {
     margin-top: 13px;
 }
 
-
 .coupon-meta span {
     background: #f3f4f6;
     color: #4b5563;
-
     padding: 5px 8px;
     border-radius: 6px;
-
     font-size: 10px;
 }
-
 
 .coupon-apply {
     width: 100%;
     margin-top: 13px;
-
     border: none;
     background: var(--primary);
     color: white;
-
     border-radius: 9px;
     padding: 10px;
-
     font-weight: 700;
 }
 
@@ -667,32 +582,25 @@ select:focus {
     display: grid;
     grid-template-columns: 1fr 1fr;
     background: #f3f4f6;
-
     padding: 4px;
     border-radius: 10px;
-
     margin: 15px 0;
 }
-
 
 .split-btn {
     border: none;
     background: transparent;
-
     border-radius: 8px;
     padding: 9px;
-
     font-size: 11px;
     font-weight: 700;
 }
-
 
 .split-btn.active {
     background: var(--card);
     box-shadow: var(--shadow);
     color: var(--primary-dark);
 }
-
 
 .person-row {
     display: grid;
@@ -701,12 +609,10 @@ select:focus {
     margin-bottom: 8px;
 }
 
-
 .person-row input {
     min-width: 0;
     padding: 10px;
 }
-
 
 .person-remove {
     border: none;
@@ -726,11 +632,9 @@ select:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding: 9px 0;
     font-size: 13px;
 }
-
 
 .payment-row strong {
     color: var(--primary-dark);
@@ -745,11 +649,9 @@ select:focus {
     border: 1px solid #bbf7d0;
 }
 
-
 .discount-row strong {
     color: #16a34a;
 }
-
 
 .summary-divider {
     height: 1px;
@@ -757,21 +659,17 @@ select:focus {
     margin: 8px 0;
 }
 
-
 .final-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding-top: 10px;
 }
-
 
 .final-row span {
     font-size: 16px;
     font-weight: 700;
 }
-
 
 .final-row strong {
     font-size: 23px;
@@ -787,33 +685,23 @@ select:focus {
     margin-top: 15px;
 }
 
-
 .bill-preview {
     display: none;
-
     width: 100%;
     max-height: 250px;
-
     object-fit: contain;
-
     margin-top: 12px;
-
     border-radius: 12px;
     border: 1px solid var(--border);
 }
 
-
 .remove-photo-btn {
     display: none;
-
     border: none;
     background: none;
-
     color: var(--danger);
-
     font-size: 11px;
     font-weight: 700;
-
     margin-top: 8px;
 }
 
@@ -826,28 +714,21 @@ select:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     margin: 24px 0 12px;
 }
-
 
 .section-heading h2 {
     font-size: 17px;
 }
 
-
 .bill-card {
     background: var(--card);
     border-radius: var(--radius);
-
     padding: 16px;
     margin-bottom: 10px;
-
     box-shadow: var(--shadow);
-
     cursor: pointer;
 }
-
 
 .bill-card-top {
     display: flex;
@@ -855,11 +736,9 @@ select:focus {
     gap: 10px;
 }
 
-
 .bill-card h3 {
     font-size: 15px;
 }
-
 
 .bill-card .date {
     color: var(--muted);
@@ -867,40 +746,31 @@ select:focus {
     margin-top: 4px;
 }
 
-
 .bill-total {
     color: var(--primary-dark);
     font-weight: 800;
 }
 
-
 .bill-card-bottom {
     display: flex;
     justify-content: space-between;
-
     margin-top: 13px;
     padding-top: 10px;
-
     border-top: 1px solid var(--border);
-
     color: var(--muted);
     font-size: 10px;
 }
 
-
 .empty-state {
     text-align: center;
     padding: 35px 15px;
-
     color: var(--muted);
 }
-
 
 .empty-state div {
     font-size: 35px;
     margin-bottom: 10px;
 }
-
 
 .empty-state h3 {
     color: var(--text);
@@ -918,7 +788,6 @@ select:focus {
     align-items: center;
 }
 
-
 .settings-row p,
 .danger-card p {
     color: var(--muted);
@@ -926,22 +795,18 @@ select:focus {
     margin-top: 4px;
 }
 
-
 .muted {
     color: var(--muted);
     font-size: 12px;
 }
 
-
 .danger-card {
     border: 1px solid #fecaca;
 }
 
-
 .danger-card h3 {
     color: #dc2626;
 }
-
 
 .version {
     text-align: center;
@@ -962,45 +827,33 @@ select:focus {
     margin: 0;
 }
 
-
 .switch input {
     display: none;
 }
 
-
 .slider {
     position: absolute;
     inset: 0;
-
     background: #d1d5db;
-
     border-radius: 30px;
     transition: 0.2s;
 }
 
-
 .slider::before {
     content: "";
-
     position: absolute;
-
     width: 20px;
     height: 20px;
-
     left: 3px;
     top: 3px;
-
     background: white;
     border-radius: 50%;
-
     transition: 0.2s;
 }
-
 
 .switch input:checked + .slider {
     background: var(--primary);
 }
-
 
 .switch input:checked + .slider::before {
     transform: translateX(22px);
@@ -1013,19 +866,13 @@ select:focus {
 
 .modal {
     display: none;
-
     position: fixed;
     inset: 0;
-
     background: rgba(0, 0, 0, 0.5);
-
     z-index: 100;
-
     padding: 20px;
-
     overflow-y: auto;
 }
-
 
 .modal.active {
     display: flex;
@@ -1033,34 +880,26 @@ select:focus {
     justify-content: center;
 }
 
-
 .modal-box {
     width: 100%;
     max-width: 600px;
-
     max-height: 90vh;
     overflow-y: auto;
-
     background: var(--card);
     border-radius: 20px;
-
     padding: 20px;
 }
-
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     margin-bottom: 15px;
 }
-
 
 .modal-header h2 {
     font-size: 20px;
 }
-
 
 .modal-header p {
     color: var(--muted);
@@ -1068,16 +907,12 @@ select:focus {
     margin-top: 4px;
 }
 
-
 .close-btn {
     width: 35px;
     height: 35px;
-
     border: none;
     background: #f3f4f6;
-
     border-radius: 10px;
-
     font-size: 22px;
 }
 
@@ -1091,19 +926,15 @@ select:focus {
     border-bottom: 1px solid var(--border);
 }
 
-
 .detail-section:last-child {
     border-bottom: none;
 }
 
-
 .detail-total {
     font-size: 16px;
     font-weight: 800;
-
     margin-top: 5px;
 }
-
 
 .detail-total strong {
     color: var(--primary-dark);
@@ -1116,7 +947,6 @@ select:focus {
 
 .toast {
     position: fixed;
-
     left: 50%;
     bottom: 85px;
 
@@ -1142,7 +972,6 @@ select:focus {
     max-width: 90%;
     text-align: center;
 }
-
 
 .toast.show {
     opacity: 1;
@@ -1174,7 +1003,6 @@ select:focus {
     z-index: 50;
 }
 
-
 .nav-item {
     width: 20%;
     max-width: 110px;
@@ -1192,16 +1020,13 @@ select:focus {
     gap: 4px;
 }
 
-
 .nav-item span {
     font-size: 20px;
 }
 
-
 .nav-item small {
     font-size: 9px;
 }
-
 
 .nav-item.active {
     color: var(--primary-dark);
@@ -1222,7 +1047,6 @@ body.dark {
     --primary-light: #173c25;
 }
 
-
 body.dark .welcome-card {
     background:
         linear-gradient(
@@ -1232,29 +1056,24 @@ body.dark .welcome-card {
         );
 }
 
-
 body.dark .discount-card {
     background: #302712;
     border-color: #695315;
 }
-
 
 body.dark .fee-card {
     background: #102d1c;
     border-color: #225b38;
 }
 
-
 body.dark .split-toggle {
     background: #111a14;
 }
-
 
 body.dark .coupon-meta span {
     background: #243028;
     color: #cbd5e1;
 }
-
 
 body.dark .close-btn {
     background: #273229;
@@ -1308,423 +1127,4 @@ body.dark .close-btn {
         grid-template-columns: 1fr 85px 35px;
     }
 
-}
-
-/* =========================================================
-   NEW BILL SECTION - ALIGNMENT FIX
-   ========================================================= */
-
-/* Keep all New Bill cards aligned */
-#calculatorPage .card,
-#calculatorPage .fee-card,
-#calculatorPage .discount-card,
-#calculatorPage .payment-card,
-#calculatorPage .summary-card {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-}
-
-/* Page title alignment */
-#calculatorPage .page-title {
-    width: 100%;
-    margin-bottom: 16px;
-}
-
-/* Card spacing */
-#calculatorPage .card,
-#calculatorPage .fee-card,
-#calculatorPage .discount-card,
-#calculatorPage .payment-card,
-#calculatorPage .summary-card {
-    margin-bottom: 14px;
-}
-
-/* Card headings */
-#calculatorPage .card-heading {
-    width: 100%;
-    align-items: center;
-}
-
-/* Make headings and right-side buttons stay aligned */
-#calculatorPage .card-heading > div {
-    min-width: 0;
-}
-
-#calculatorPage .card-heading button {
-    flex-shrink: 0;
-}
-
-/* Inputs inside New Bill */
-#calculatorPage input,
-#calculatorPage select {
-    width: 100%;
-    max-width: 100%;
-}
-
-/* Bill amount section */
-#calculatorPage .money-input {
-    width: 100%;
-}
-
-/* Platform fee alignment */
-#calculatorPage .fee-card {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 16px 18px;
-}
-
-#calculatorPage .fee-icon {
-    flex-shrink: 0;
-}
-
-#calculatorPage .fee-content {
-    min-width: 0;
-}
-
-#calculatorPage .fee-content strong,
-#calculatorPage .fee-content span {
-    overflow-wrap: break-word;
-}
-
-/* Tip section */
-#calculatorPage .tip-buttons {
-    width: 100%;
-    margin-top: 14px;
-}
-
-#calculatorPage .tip-btn {
-    width: 100%;
-    min-width: 0;
-}
-
-/* Custom tip input */
-#calculatorPage #customTipContainer {
-    width: 100%;
-    margin-top: 10px;
-}
-
-/* Discount section */
-#calculatorPage .discount-card {
-    width: 100%;
-}
-
-#calculatorPage .discount-card p {
-    line-height: 1.5;
-}
-
-/* Discount saving alignment */
-#calculatorPage .discount-saving {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-/* Coupon section */
-#calculatorPage .applied-coupon {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-/* People section */
-#calculatorPage .split-toggle {
-    width: 100%;
-}
-
-#calculatorPage .person-row {
-    width: 100%;
-    align-items: center;
-}
-
-/* Prevent person inputs from overflowing */
-#calculatorPage .person-row input {
-    width: 100%;
-    min-width: 0;
-}
-
-/* People add button */
-#calculatorPage #addPersonBtn {
-    width: 100%;
-    margin-top: 8px;
-}
-
-/* Payment summary */
-#calculatorPage .payment-card {
-    width: 100%;
-}
-
-#calculatorPage .payment-row {
-    width: 100%;
-    gap: 15px;
-}
-
-#calculatorPage .payment-row span {
-    min-width: 0;
-}
-
-#calculatorPage .payment-row strong {
-    flex-shrink: 0;
-}
-
-/* Bill summary */
-#calculatorPage .summary-card {
-    width: 100%;
-}
-
-#calculatorPage .summary-row {
-    width: 100%;
-    gap: 15px;
-}
-
-#calculatorPage .summary-row span {
-    min-width: 0;
-}
-
-#calculatorPage .summary-row strong {
-    flex-shrink: 0;
-}
-
-/* Final amount */
-#calculatorPage .final-row {
-    width: 100%;
-    gap: 15px;
-}
-
-#calculatorPage .final-row span {
-    min-width: 0;
-}
-
-#calculatorPage .final-row strong {
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-/* Photo section */
-#calculatorPage .photo-section {
-    width: 100%;
-}
-
-#calculatorPage .photo-section .secondary-btn {
-    width: 100%;
-}
-
-/* Bill preview */
-#calculatorPage .bill-preview {
-    width: 100%;
-    max-width: 100%;
-}
-
-/* Save / Share buttons */
-#calculatorPage .big-btn {
-    width: 100%;
-    display: block;
-}
-
-/* If Save and Share are inside a button group */
-#calculatorPage .action-buttons {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-#calculatorPage .action-buttons button {
-    width: 100%;
-    margin: 0;
-}
-
-/* =========================================================
-   MOBILE NEW BILL ALIGNMENT
-   ========================================================= */
-
-@media (max-width: 480px) {
-
-    #calculatorPage .page-title {
-        margin-bottom: 14px;
-    }
-
-    #calculatorPage .card,
-    #calculatorPage .fee-card,
-    #calculatorPage .discount-card,
-    #calculatorPage .payment-card,
-    #calculatorPage .summary-card {
-        padding: 16px;
-        border-radius: 16px;
-    }
-
-    /* Better heading spacing */
-    #calculatorPage .card-heading {
-        gap: 8px;
-    }
-
-    #calculatorPage .card-heading h3 {
-        font-size: 15px;
-    }
-
-    /* Fee card */
-    #calculatorPage .fee-card {
-        gap: 10px;
-    }
-
-    #calculatorPage .fee-icon {
-        width: 40px;
-        height: 40px;
-    }
-
-    /* Tip buttons */
-    #calculatorPage .tip-buttons {
-        gap: 7px;
-    }
-
-    #calculatorPage .tip-btn {
-        padding: 10px 4px;
-        font-size: 12px;
-    }
-
-    /* People rows */
-    #calculatorPage .person-row {
-        grid-template-columns: minmax(0, 1fr) 82px 35px;
-        gap: 6px;
-    }
-
-    #calculatorPage .person-row input {
-        padding: 10px 8px;
-        font-size: 13px;
-    }
-
-    /* Payment rows */
-    #calculatorPage .payment-row,
-    #calculatorPage .summary-row {
-        font-size: 12px;
-    }
-
-    /* Final total */
-    #calculatorPage .final-row span {
-        font-size: 15px;
-    }
-
-    #calculatorPage .final-row strong {
-        font-size: 21px;
-    }
-
-    /* Save + Share */
-    #calculatorPage .action-buttons {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-}
-
-
-/* =========================================================
-   VERY SMALL SCREENS
-   ========================================================= */
-
-@media (max-width: 360px) {
-
-    #calculatorPage .card,
-    #calculatorPage .fee-card,
-    #calculatorPage .discount-card,
-    #calculatorPage .payment-card,
-    #calculatorPage .summary-card {
-        padding: 14px;
-    }
-
-    #calculatorPage .person-row {
-        grid-template-columns: minmax(0, 1fr) 70px 32px;
-        gap: 5px;
-    }
-
-    #calculatorPage .person-row input {
-        font-size: 12px;
-    }
-
-    #calculatorPage .tip-btn {
-        font-size: 11px;
-    }
-}
-/* =========================================================
-   NEW BILL HEADER - EXACT ALIGNMENT
-========================================================= */
-
-#calculatorPage .page-title {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 16px;
-    width: 100%;
-    min-height: 64px;
-    margin-bottom: 18px;
-}
-
-/* Back arrow */
-#calculatorPage .page-title .back-btn {
-    position: static;
-    transform: none;
-
-    width: 50px;
-    height: 50px;
-
-    flex-shrink: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 13px;
-    font-size: 24px;
-}
-
-/* Text container */
-#calculatorPage .page-title > div {
-    flex: 1;
-    width: auto;
-    text-align: left;
-}
-
-/* New Bill heading */
-#calculatorPage .page-title h2 {
-    text-align: left;
-    margin: 0;
-    font-size: 28px;
-    line-height: 1.15;
-}
-
-/* Subtitle */
-#calculatorPage .page-title p {
-    text-align: left;
-    margin: 5px 0 0;
-    font-size: 15px;
-    color: var(--muted);
-}
-
-
-/* Mobile */
-@media (max-width: 480px) {
-
-    #calculatorPage .page-title {
-        gap: 14px;
-        min-height: 58px;
-    }
-
-    #calculatorPage .page-title .back-btn {
-        width: 48px;
-        height: 48px;
-        font-size: 22px;
-    }
-
-    #calculatorPage .page-title h2 {
-        font-size: 25px;
-    }
-
-    #calculatorPage .page-title p {
-        font-size: 14px;
-        margin-top: 4px;
-    }
 }
